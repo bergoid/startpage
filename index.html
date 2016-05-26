@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript">
+            encodeUrl = function(str)
+            {
+                return encodeURIComponent(str).replace
+                (
+                    /[!'()*]/g,
+                    function(c)
+                    {
+                        return '%' + c.charCodeAt(0).toString(16);
+                    }
+                );
+            };
+
+            var encodeQuery = function(query)
+            {
+                return query
+                    .split(" ")
+                    .map(encodeUrl)
+                    .join("+");
+            };
+
+            //////////////////////////////////////////////////////////////////////////////////////////////////
+            // Edit this data structure to change the content of the page:
+
+            var spdata = {
+
+                search :
+                [
+                    [ { url:"http://www.google.com", name:"Google" }, { baseUrl: "https://www.google.com/search?q=", queryFun: encodeQuery } ],
+                    [ { url:"http://maps.google.com", name:"Google Maps" }, { baseUrl: "https://www.google.com/maps/search/", queryFun: encodeQuery } ],
+                    [ { url:"http://images.google.com", name:"Google Images" }, { baseUrl: "https://www.google.com/search?tbm=isch&q=", queryFun: encodeQuery } ],
+                    [ { url:"https://www.flickr.com", name:"flickr.com" }, { baseUrl: "https://www.flickr.com/search/?text=", queryFun: encodeUrl } ],
+                    [ { url:"https://en.wikipedia.org", name:"Wikipedia" }, { baseUrl: "https://en.wikipedia.org/wiki/Special:Search?search=", queryFun: encodeQuery } ]
+                ],
+
+                sites :
+                [
+                    { url:"http://www.example.com/", name:"Example" },
+                    { url:"https://mail.google.com", name:"GMail" }
+                ]
+
+            };
+
+            // End of editable part
+            //////////////////////////////////////////////////////////////////////////////////////////////////
+
+            spdata.all = [ spdata.sites, spdata.search, spdata.search ];
+
+            var wi = {};
+
+            //
+            wi.forEach = function(array, loopFun, breakable)
+            {
+                var i=0, element;
+                if (breakable)
+                {
+                    while (element = array[i])
+                        if (loopFun(element,i++))
+                            return true;
+                }
+                else
+                    while (element = array[i])
+                        loopFun(element,i++);
+
+                return false;
+            };
+
+            //
+            wi.isArray = ('isArray' in Array) ? Array.isArray : function (value) {
+                return Object.prototype.toString.call(value) === '[object Array]';
+            };
+
+
+            var ra = {};
+
+            //
+            if (String.prototype.trim)
+            {
+              ra.trim = function(s) {
+                  return s.trim();
+                };
+            }
+            else
+            {
+              ra.trim = function(s) {
+                  return s.replace(/^\s+|\s+$/g,"");
+                };
+            }
+
+            //
+            ra.addName = function(s,name)
+            {
+              if (s.search(new RegExp("\\b" + name + "\\b", "g")) == -1)
+                return s + " " + name;
+              else
+                return s;
+            };
+
+            //
+            ra.removeName = function(s,name)
+            {
+                return ra.trim(s.replace(new RegExp("\\b" + name + "\\b", "g"), "").replace(/\s{2,}/g, " "));
+            };
+
+            //
+            ra.hasClass = function(e, className)
+            {
+                if (e)
+                    return ra.hasName(e.className, className);
+            };
+
+            //
+            ra.addClass = function(e, className)
+            {
+                if (e)
+                    e.className = ra.addName(e.className, className);
+            };
+
+            //
+            ra.removeClass = function(e, className)
+            {
+                if (e)
+                    e.className = ra.removeName(e.className, className);
+            };
+
+            //
+            ra.getKeyCode = function(event)
+            {
+                return (typeof event.which === "number") ? event.which : event.keyCode;
+            }
+
+            //
+            ra.el = function (id)
+            {
+                return document.getElementById(id);
+            };
+
+            //
+            ra.body = function ()
+            {
+                return document.getElementsByTagName("body")[0];
+            };
+
+
+            //
+            ra.crel = function(type, arg2, arg3)
+            {
+                var theNode = undefined;
+                var key="";
+                var i=0;
+                var properties = undefined;
+                var children = undefined;
+
+                if (type)
+                {
+                    if (wi.isArray(arg3))
+                    {
+                        properties = arg2;
+                        children = arg3;
+                    }
+                    else
+                        if (wi.isArray(arg2))
+                            children = arg2;
+                        else
+                            properties = arg2;
+
+                    theNode = document.createElement(type);
+
+                    if (theNode)
+                    {
+                        if (properties)
+                            for (key in properties)
+                                theNode[key] = properties[key];
+
+                        if (children)
+                            if (typeof children[0] === "string")
+                                theNode.appendChild(ra.crel(children[0], children[1], children[2]));
+                            else
+                                wi.forEach(
+                                    children,
+                                    function(elem){
+                                        if (wi.isArray(elem))
+                                            theNode.appendChild(ra.crel(elem[0], elem[1], elem[2]));
+                                        else
+                                            theNode.appendChild(elem);
+                                        }
+                                    );
+                    }
+                }
+
+                return theNode;
+            }
+
+
+            var app = function create_app()
+            {
+                var currentFocus = undefined;
+
+                ////////////////////////
+                // Helper functions
+                ////////////////////////
+                //
+                var getId = function(row, column)
+                {
+                    return "r" + row + "c" + column;
+                };
+
+                //
+                var focusCell = function(row, column)
+                {
+                    var element = ra.el(getId(row, column));
+
+                    if (element)
+                    {
+                        if (column>1)
+                            element = element.firstChild;
+                        element.focus();
+                        return true;
+                    }
+
+                    return false;
+                };
+
+                ////////////////////////
+                // Event handlers
+                ////////////////////////
+                //
+                var onFocus = function(row, column)
+                {
+                    currentFocus = { row: row, column: column };
+                };
+
+                //
+                var onBlur = function()
+                {
+                    currentFocus = undefined;
+                };
+
+                //
+                var onFocusInput = function(event, rowIndex)
+                {
+                    var elem = ra.el(getId(rowIndex,2));
+                    ra.removeClass(elem, "whiteBackground");
+                    ra.addClass(elem, "blueBackground");
+                    onFocus(rowIndex, 2);
+                };
+
+                //
+                var onBlurInput = function(event, rowIndex)
+                {
+                    var elem = ra.el(getId(rowIndex,2));
+                    ra.removeClass(elem, "blueBackground");
+                    ra.addClass(elem, "whiteBackground");
+                    onBlur();
+                };
+
+                //
+                var onFocusLink = function(event, rowIndex, colIndex)
+                {
+                    onFocus(rowIndex, colIndex);
+                };
+
+                //
+                var onBlurLink = function(event, rowIndex, colIndex)
+                {
+                    onBlur();
+                };
+
+                //
+                var onKeyDown = function(event)
+                {
+                    if (!currentFocus)
+                        focusCell(0,0);
+                    else
+                        switch(ra.getKeyCode(event))
+                        {
+                            case 38: // up
+                                if (currentFocus.row>0)
+                                    focusCell(currentFocus.row-1, currentFocus.column);
+                                break;
+
+                            case 40: // down
+                                if (currentFocus.row<spdata.all[currentFocus.column].length-1)
+                                    focusCell(currentFocus.row+1, currentFocus.column);
+                                break;
+
+                            case 37: // left
+                                if ((currentFocus.column>0) && (!event.target.selectionStart || (event.target.selectionStart<1)))
+                                    focusCell(Math.min(currentFocus.row, spdata.all[currentFocus.column-1].length-1), currentFocus.column-1);
+                                break;
+
+                            case 39: // right
+                                if (currentFocus.column<2)
+                                {
+                                    event.preventDefault();
+                                    focusCell(Math.min(currentFocus.row, spdata.all[currentFocus.column+1].length-1), currentFocus.column+1);
+                                }
+                                break;
+
+                            default:
+                                break;
+                        }
+                };
+
+                //
+                var onInputKeyUp = function(event, dataElem, value)
+                {
+                    if (ra.getKeyCode(event)==13)
+                    {
+                        window.location.href=dataElem.baseUrl + dataElem.queryFun(value);
+                    }
+                };
+
+                ////////////////////////
+                // DOM functions
+                ////////////////////////
+                //
+                var cellDOM = function(dataElem, rowIndex, colIndex, linkCellColor)
+                {
+                    if ('url' in dataElem)
+                    {
+                        return ra.crel
+                        (
+                            "a",
+                            {
+                                id: getId(rowIndex, colIndex),
+                                className: "pageCell linkCell " + linkCellColor,
+                                href: dataElem.url,
+                                innerHTML: dataElem.name,
+                                onfocus: function(event) { onFocusLink(event, rowIndex, colIndex); },
+                                onblur: function(event) { onBlurLink(event, rowIndex, colIndex); }
+                            }
+                        )
+                    }
+                    else
+                    {
+                        return ra.crel
+                        (
+                            "div",
+                            {
+                                id: getId(rowIndex, colIndex),
+                                className: "pageCell inputCell"
+                            },
+                            [
+                                ra.crel
+                                (
+                                    "input",
+                                    {
+                                        type: "text",
+                                        className: "spInput",
+                                        onkeyup: function(event) { onInputKeyUp(event, dataElem, this.value); },
+                                        onfocus: function(event) { onFocusInput(event, rowIndex); },
+                                        onblur: function(event) { onBlurInput(event, rowIndex); }
+                                    }
+                                )
+                            ]
+                        )
+                    }
+                };
+
+                //
+                var pageDOM = function()
+                {
+                    return ra.crel
+                    (
+                        "div",
+                        {
+                            className: "layoutTable"
+                        },
+                        [
+                            ra.crel
+                            (
+                                "div",
+                                {
+                                    className: "layoutRow"
+                                },
+                                [
+                                    ra.crel
+                                    (
+                                        "div",
+                                        {
+                                            className: "layoutCell"
+                                        },
+                                        [
+                                            ra.crel
+                                            (
+                                                "div",
+                                                {
+                                                    className: "pageTable"
+                                                },
+                                                spdata.sites.map
+                                                (
+                                                    function(dataElem, rowIndex)
+                                                    {
+                                                        return ra.crel
+                                                        (
+                                                            "div",
+                                                            {
+                                                                className: "pageRow"
+                                                            },
+                                                            [
+                                                                cellDOM(dataElem, rowIndex, 0, "linkCellRed")
+                                                            ]
+                                                        );
+                                                    }
+                                                )
+                                            )
+                                        ]
+                                    ),
+                                    ra.crel
+                                    (
+                                        "div",
+                                        {
+                                            className: "layoutCell"
+                                        },
+                                        [
+                                            ra.crel
+                                            (
+                                                "div",
+                                                {
+                                                    className: "pageTable"
+                                                },
+                                                spdata.search.map
+                                                (
+                                                    function(dataRow, rowIndex)
+                                                    {
+                                                        return ra.crel
+                                                        (
+                                                            "div",
+                                                            {
+                                                                className: "pageRow"
+                                                            },
+                                                            dataRow.map
+                                                            (
+                                                                function(dataElem, colIndex)
+                                                                {
+                                                                    return cellDOM(dataElem, rowIndex, colIndex+1, "linkCellBlue");
+                                                                }
+                                                            )
+                                                        );
+                                                    }
+                                                )
+                                            )
+                                        ]
+                                    )
+                                ]
+                            )
+                        ]
+                    );
+                };
+
+                //
+                var go = function(state)
+                {
+                    ra.body().appendChild(pageDOM());
+                    ra.body().onkeydown = onKeyDown;
+                    focusCell(0,0);
+                };
+
+                //////////////////////////////
+                // Public interface
+                return {
+                    go: go
+                };
+            }(); // app
+        </script>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <style type="text/css">
+            body
+            {
+                font-family: sans-serif;
+                font-size: 1.5vmax;
+            }
+
+
+            .layoutTable
+            {
+                display: table;
+                margin: auto;
+            }
+
+            .layoutRow
+            {
+                display: table-row;
+            }
+
+            .layoutCell
+            {
+                display: table-cell;
+            }
+
+            .pageTable
+            {
+                display: table;
+                margin-top: 3em;
+                margin-left: 1em;
+                margin-right: 1em;
+                border-top: 2px solid #d0d0d0;
+                border-left: 2px solid #e0e0e0;
+                min-width: 300px;
+            }
+
+            .pageRow
+            {
+                display: table-row;
+            }
+
+            .pageCell
+            {
+                display: table-cell;
+                border-top: none;
+                border-left: none;
+                border-right: 2px solid #d0d0d0;
+                border-bottom: 2px solid #e0e0e0;
+            }
+
+            .pageCell:focus
+            {
+                outline: none;
+                background-color: #c0c0ff;
+            }
+
+            .linkCell
+            {
+                text-decoration: none;
+                padding: .5em;
+            }
+
+            .linkCell:hover
+            {
+                color: #ffffff;
+            }
+
+            .linkCellRed
+            {
+                color: #800000;
+            }
+
+            .linkCellRed:hover
+            {
+                background-color: #800000;
+            }
+
+            .linkCellBlue
+            {
+                color: #000080;
+            }
+
+            .linkCellBlue:hover
+            {
+                background-color: #000080;
+            }
+
+            .inputCell
+            {
+
+            }
+
+            .spInput
+            {
+                font-family: sans-serif;
+                font-size: 1em;
+                border: none;
+                margin-left: .2em;
+                margin-right: .2em;
+                padding: .2em;
+            }
+
+            .blueBackground
+            {
+                background-color: #c0c0ff;
+            }
+
+            .whiteBackground
+            {
+                background-color: #ffffff;
+            }
+        </style>
+        <title>Startpage</title>
+    </head>
+    <body onload="app.go()"></body>
+</html>
