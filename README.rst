@@ -9,9 +9,9 @@ The contents of the page can be changed by opening the file in a text editor and
 
 The left side of the page shows a list of hyperlinks.
 
-The right side show a table with 2 columns:
+The right side shows a table with 2 columns:
 
-- The left column is also a list of hyperlinks
+- The left column is also a list of hyperlinks.
 - The right column are input fields where you can enter search queries for the website corresponding to the hyperlink on the same row in the left column.
 
 
