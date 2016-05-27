@@ -29,12 +29,13 @@
             };
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
-            // Edit this data structure to change the content of the page:
-
+            // Configuration part
+            //
+            // Edit this data structure to change the content of the page.
             // The properties 'baseUrl' and 'queryFun' construct a URL as follows:
-            // If 'value' is the string entered in the search box, then : URL = baseUrl + queryFun (value)
-            // In the examples given here, only two different functions are necessary to convert search queries.
-            // Implement your own function when needed.
+            //     If 'value' is the string entered in the search box, then : URL = baseUrl + queryFun (value)
+            //     In the examples given here, only two different functions are necessary to convert search queries.
+            //     Implement your own function when needed.
             var spdata = {
 
                 search :
@@ -54,7 +55,11 @@
 
             };
 
-            // End of editable part
+            // The position of the initial focus on page load:
+            var startRow = 0;
+            var startColumn = 1;
+
+            // End of configuration part
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
             spdata.all = [ spdata.sites, spdata.search, spdata.search ];
@@ -467,7 +472,7 @@
                 {
                     ra.body().appendChild(pageDOM());
                     ra.body().onkeydown = onKeyDown;
-                    focusCell(0,0);
+                    focusCell(startRow, startColumn);
                 };
 
                 //////////////////////////////
