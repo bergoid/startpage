@@ -1,0 +1,4 @@
+- ESC to clear input field
+- use flexbox
+
+
