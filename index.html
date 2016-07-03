@@ -1,6 +1,33 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf-8">
+
+        <!--
+
+
+        TODO:
+        -----
+
+        . arbitrary number of tables
+            . ability to group them:
+                - one group next to eachother if viewport
+                  allows it, under eachother on smaller displays.
+                - different groups are always under eachother, no matter
+                  how much room.
+
+        . collapsible lists of links
+
+        v inputCell focus:
+            x separate div whose size & pos matches focused cell?
+            x leads to trouble getting focus into input box with touch devices?
+            v instead of border, use lightblue BG, both for inputCell as input box
+                ; this is consistent with the focus appearance of other cells
+                ; will look the same on both Chrome & FF (?)
+
+
+        -->
+
         <script type="text/javascript">
             //
             // URL-encode argument string
@@ -258,8 +285,10 @@
                 var onFocusInput = function(event, rowIndex)
                 {
                     var elem = ra.el(getId(rowIndex,2));
-                    ra.removeClass(elem, "whiteBackground");
-                    ra.addClass(elem, "blueBackground");
+                    ra.removeClass(elem, "blurredCell");
+                    ra.addClass(elem, "focusedCell");
+                    ra.removeClass(elem.firstChild, "blurredCell");
+                    ra.addClass(elem.firstChild, "focusedCell");
                     onFocus(rowIndex, 2);
                 };
 
@@ -267,8 +296,10 @@
                 var onBlurInput = function(event, rowIndex)
                 {
                     var elem = ra.el(getId(rowIndex,2));
-                    ra.removeClass(elem, "blueBackground");
-                    ra.addClass(elem, "whiteBackground");
+                    ra.removeClass(elem, "focusedCell");
+                    ra.addClass(elem, "blurredCell");
+                    ra.removeClass(elem.firstChild, "focusedCell");
+                    ra.addClass(elem.firstChild, "blurredCell");
                     onBlur();
                 };
 
@@ -315,6 +346,19 @@
                                 }
                                 break;
 
+                            case 27: // escape
+                                if (currentFocus.column>1)
+                                {
+                                    var elem = ra.el(getId(currentFocus.row, currentFocus.column));
+                                    if (elem)
+                                    {
+                                        console.log("row: " + currentFocus.row + ", col: " + currentFocus.column + ", value: " + elem.firstChild.value);
+                                        elem.blur();
+                                        setTimeout(function(){ elem.firstChild.value = ''; elem.focus(); }, 0);
+                                    }
+                                }
+                                break;
+
                             default:
                                 break;
                         }
@@ -342,7 +386,7 @@
                             "a",
                             {
                                 id: getId(rowIndex, colIndex),
-                                className: "pageCell linkCell " + linkCellColor,
+                                className: "pageCell blurredCell linkCell " + linkCellColor,
                                 href: dataElem.url,
                                 innerHTML: dataElem.name,
                                 onfocus: function(event) { onFocusLink(event, rowIndex, colIndex); },
@@ -357,7 +401,7 @@
                             "div",
                             {
                                 id: getId(rowIndex, colIndex),
-                                className: "pageCell inputCell"
+                                className: "pageCell blurredCell inputCell"
                             },
                             [
                                 ra.crel
@@ -482,7 +526,6 @@
                 };
             }(); // app
         </script>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <style type="text/css">
             body
             {
@@ -513,8 +556,11 @@
                 margin-top: 3em;
                 margin-left: 1em;
                 margin-right: 1em;
-                border-top: 2px solid #d0d0d0;
-                border-left: 2px solid #e0e0e0;
+                /*
+                border-top: 2px solid #f8f8f8;
+                border-left: 2px solid #f8f8f8;
+                */
+                border-collapse: collapse;
                 min-width: 300px;
             }
 
@@ -528,14 +574,21 @@
                 display: table-cell;
                 border-top: none;
                 border-left: none;
-                border-right: 2px solid #d0d0d0;
-                border-bottom: 2px solid #e0e0e0;
+                /*
+                border-right: 2px solid #f8f8f8;
+                border-bottom: 2px solid #f8f8f8;
+                border: 2px solid #f8f8f8;
+                */
+
+                border-width: 2px;
+                border-style: solid;
+                border-color: #f8f8f8;
+                outline: none;
             }
 
             .pageCell:focus
             {
-                outline: none;
-                background-color: #c0c0ff;
+                background-color: #e0e0ff;
             }
 
             .linkCell
@@ -571,25 +624,24 @@
 
             .inputCell
             {
-
+                padding: .2em;
             }
 
             .spInput
             {
+                display: table-cell;
                 font-family: sans-serif;
                 font-size: 1em;
                 border: none;
-                margin-left: .2em;
-                margin-right: .2em;
-                padding: .2em;
+                outline: none;
+                width: 100%;
             }
-
-            .blueBackground
+            .focusedCell
             {
-                background-color: #c0c0ff;
+                background-color: #e0e0ff;
             }
 
-            .whiteBackground
+            .blurredCell
             {
                 background-color: #ffffff;
             }
