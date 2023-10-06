@@ -1,4 +1,21 @@
-- ESC to clear input field
-- use flexbox
+. use flexbox
+. different sections per column
+	. a title at top of every section
+. smaller font
+. replace custom modules with vanilla JS
+	. wi
+	. ra
+. media queries for light/dark theme
+. search suggestions
 
+v ESC to clear input field
 
+===============================================================================
+
+https://medium.com/@tforward/get-html-to-the-dom-fast-with-js-template-literals-insertadjacenthtml-24b8aa4e8807
+
+https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
+
+================================================================================

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+
+        <style type="text/css">
+            body
+            {
+                font-family: sans-serif;
+                font-size: 1.5vmax;
+            }
+
+            input
+            {
+                font-size: 1em;
+            }
+
+            a
+            {
+                padding: 1em;
+                color: #800000;
+                text-decoration: none;
+            }
+
+            a:hover
+            {
+                color: #ffffff;
+                background-color: #800000;
+            }
+
+            .fb-space-around
+            {
+                justify-content: space-around;
+            }
+            
+            .fb-row
+            {
+                display: flex;
+                flex-flow: row wrap;
+            }
+            
+            .fb-column
+            {
+                display: flex;
+                flex-flow: column wrap;
+            }
+
+            .set
+            {
+                margin: 1em;
+            }
+            
+            .element
+            {
+                border: 1px solid #c0c0c0;
+            }
+            
+            .header
+            {
+                /*background-color: #000080;*/
+                padding: 1em;
+                color: #000000;
+                font-weight: bold;
+                display: flex;
+                flex-flow: column wrap;
+            }
+            
+        </style>
+
+        <script type="text/javascript">
+            var startpage_contents = [
+                /* Column 1 */
+                [
+                    {
+                        "header": "header1",
+                        "contents":
+                        [
+                            "button1-1",
+                            "button1-2"
+                        ]
+                    },
+                    {
+                        "header": "header2",
+                        "contents":
+                        [
+                            "button2-1",
+                            "button2-2",
+                            "button2-3"
+                        ]
+                    }
+                ],
+
+                /* Column 2 */
+                [
+                    {
+                        "header": "header3",
+                        "contents":
+                        [
+                            "button3-1",
+                            "button3-2"
+                        ]
+                    }
+                ],
+
+                /* Column 3 */
+                [
+                    {
+                        "header": "header4",
+                        "contents":
+                        [
+                            "button4-1",
+                            "button4-2"
+                        ]
+                    },
+                    {
+                        "header": "header5",
+                        "contents":
+                        [
+                            "button5-1",
+                            "button5-2",
+                            "button5-3"
+                        ]
+                    },
+                    {
+                        "header": "header6",
+                        "contents":
+                        [
+                            "button6-1",
+                            "button6-2"
+                        ]
+                    }
+                ],
+            ];
+
+            var build_element = function(element)
+            {
+                let html = `<a class="element" href="https://search.brave.com">
+                    ${element}
+                    </a>
+                    `;
+
+                return html;
+            }
+
+            var build_set = function(set)
+            {
+                let html = `<div class="header element">${set.header}</div>`;
+
+                set.contents.forEach(element => {
+                    html += build_element(element)
+                });
+
+                return html;
+            }
+
+            var build_column = function(column)
+            {
+                let html = ``;
+
+                column.forEach(set => {
+                    html += `<div class="fb-column set">
+                        ${build_set(set)}
+                        </div>
+                        `;
+                });
+
+                return html;
+            }
+
+            var build_html = function(data)
+            {
+                //html = JSON.stringify(data);
+
+                let columns_html = ``;
+
+                data.forEach(column => {
+                    columns_html += `<div class="fb-column">
+                        ${build_column(column)}
+                        </div>
+                        `;
+                });
+
+                let html = `<div class="fb-row fb-space-around">
+                    ${columns_html}
+                    </div>
+                    `;
+
+                return html;
+            }
+
+            var go = function()
+            {
+                console.log("Hello!");
+
+                let html = build_html(startpage_contents);
+
+                document.body.insertAdjacentHTML("beforeend", html);
+            }
+
+           </script>
+
+    </head>
+
+    <body onload="go()">
+    </body>
+</html>
