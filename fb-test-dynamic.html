@@ -68,24 +68,41 @@
         </style>
 
         <script type="text/javascript">
+            //
+            // URL-encode argument string
+            // Adhere to http://tools.ietf.org/html/rfc3986
+            // See: https://developer.mozilla.org/nl/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
+            var encodeUrl = function(str)
+            {
+                return encodeURIComponent(str).replace
+                (
+                    /[!'()*]/g,
+                    function(c)
+                    {
+                        return '%' + c.charCodeAt(0).toString(16);
+                    }
+                );
+            };
+
+            //
+            // URL-encode each word in a query and concatenate them with '+' signs in between.
+            var encodeQuery = function(query)
+            {
+                return query
+                    .split(" ")
+                    .map(encodeUrl)
+                    .join("+");
+            };
+
             var startpage_contents = [
                 /* Column 1 */
                 [
                     {
-                        "header": "header1",
+                        "header": "Misc",
                         "contents":
                         [
-                            "button1-1",
-                            "button1-2"
-                        ]
-                    },
-                    {
-                        "header": "header2",
-                        "contents":
-                        [
-                            "button2-1",
-                            "button2-2",
-                            "button2-3"
+                            { url:"http://www.example.com/", name:"Example" },
+                            { url:"https://proton.me", name:"Proton Mail" }
                         ]
                     }
                 ],
@@ -93,11 +110,23 @@
                 /* Column 2 */
                 [
                     {
-                        "header": "header3",
+                        "header": "Frontend frameworks",
                         "contents":
                         [
-                            "button3-1",
-                            "button3-2"
+                            { url:"https://lit.dev/", name:"Lit" },
+                            { url:"https://svelte.dev/", name:"Svelte" },
+                            { url:"https://alpinejs.dev/", name:"Alpine.js" },
+                            { url:"https://htmx.org/", name:"htmx" }
+                        ]
+                    },
+                    {
+                        "header": "Online tools",
+                        "contents":
+                        [
+                            { url:"https://flems.io/", name:"flems.io" },
+                            { url:"https://replit.com/", name:"Replit" },
+                            { url:"https://www.typescriptlang.org/play/", name:"TS Playground" },
+                            { url:"https://rentry.co/", name:"rentry.co" }
                         ]
                     }
                 ],
@@ -105,50 +134,70 @@
                 /* Column 3 */
                 [
                     {
-                        "header": "header4",
+                        "header": "Search",
                         "contents":
                         [
-                            "button4-1",
-                            "button4-2"
-                        ]
-                    },
-                    {
-                        "header": "header5",
-                        "contents":
-                        [
-                            "button5-1",
-                            "button5-2",
-                            "button5-3"
-                        ]
-                    },
-                    {
-                        "header": "header6",
-                        "contents":
-                        [
-                            "button6-1",
-                            "button6-2"
+                            [ { url:"https://search.brave.com", name:"Brave Search" }, { baseUrl: "https://search.brave.com/search?q=", queryFun: encodeQuery } ],
+                            [ { url:"https://search.brave.com/", name:"Brave Images" }, { baseUrl: "https://search.brave.com/images?q=", queryFun: encodeQuery } ],
+                            [ { url:"https://www.openstreetmap.org/", name:"OpenStreetMap" }, { baseUrl: "https://www.openstreetmap.org/search?query=", queryFun: encodeQuery } ],
+                            [ { url:"https://en.wikipedia.org", name:"Wikipedia" }, { baseUrl: "https://en.wikipedia.org/wiki/Special:Search?search=", queryFun: encodeQuery } ]
                         ]
                     }
                 ],
             ];
 
-            var build_element = function(element)
+            var build_element_single = function(element)
             {
-                let html = `<a class="element" href="https://search.brave.com">
-                    ${element}
+                let html = `<a class="element" href="${element.url}">
+                    ${element.name}
                     </a>
                     `;
 
                 return html;
             }
 
+            var build_element_double = function(element)
+            {
+
+                let html = `<div class "fb-row">`;
+
+                html += `<a href="${element[0].url}">
+                    ${element[0].name}
+                    </a>
+                    `;
+
+                html += `<input>
+                    </input>
+                    `;
+
+                html += `</div>`;
+
+                return html;
+            }
+
+            var build_element = function(element)
+            {
+                // TODO : introspect element and distinguish between _single & _double
+                if (Array.isArray(element))
+                    return build_element_double(element);
+                else
+                    return build_element_single(element);
+            }
+
             var build_set = function(set)
             {
                 let html = `<div class="header element">${set.header}</div>`;
 
-                set.contents.forEach(element => {
+                if ( (set.contents) && (set.contents[0]) )
+                    // if (set.contents[0].)
+                    set.contents.forEach(element => {
                     html += build_element(element)
-                });
+                    });
+
+
+                // set.contents.forEach(element => {
+                //     html += build_element(element)
+                // });
 
                 return html;
             }
