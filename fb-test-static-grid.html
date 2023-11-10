@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+
+        <style type="text/css">
+            body
+            {
+                font-family: sans-serif;
+                font-size: 1.5vmax;
+                background-color: #eeeeff;
+            }
+
+            input
+            {
+                font-size: 1em;
+            }
+
+            a
+            {
+                padding: 1em;
+                color: #800000;
+                text-decoration: none;
+            }
+
+            a:hover
+            {
+                color: #ffffff;
+                background-color: #800000;
+            }
+
+            .fb-space-around
+            {
+                justify-content: space-around;
+            }
+            
+            .fb-row
+            {
+                display: flex;
+                flex-flow: row wrap;
+            }
+            
+            .fb-column
+            {
+                display: flex;
+                flex-flow: column wrap;
+            }
+
+            .set
+            {
+                margin: 1em;
+            }
+            
+            .element
+            {
+                border: 1px solid #c0c0c0;
+            }
+            
+            .header
+            {
+                /*background-color: #000080;*/
+                padding: 1em;
+                color: #000000;
+                font-weight: bold;
+                display: flex;
+                flex-flow: column wrap;
+            }
+            
+        </style>
+    </head>
+
+    <body>
+        <div class="fb-row fb-space-around">
+            <div class="fb-column">
+                <div class="fb-column set">
+                    <div class="header element">
+                        header1
+                    </div>
+                    <a href="https://search.brave.com" class="element">
+                        button1-1
+                    </a>
+                    <a href="https://search.brave.com" class="element">
+                        button1-2
+                    </a>
+                </div>
+                <div class="fb-column set">
+                    <div class="header element">
+                        header2
+                    </div>
+                    <a href="https://search.brave.com" class="element">
+                        button2-1
+                    </a>
+                    <a href="https://search.brave.com" class="element">
+                        button2-2
+                    </a>
+                    <a href="https://search.brave.com" class="element">
+                        button2-3
+                    </a>
+                </div>
+            </div>
+            <div class="fb-column">
+                <div class="fb-column set">
+                    <div class="header element"> 
+                        header3
+                    </div>
+                    <a href="https://search.brave.com" class="element">
+                        button3-1
+                    </a>
+                    <a href="https://search.brave.com" class="element">
+                        button3-2
+                    </a>
+                </div>
+            </div>
+            <div class="fb-column">
+                <div class="fb-column set">
+                    <div class="header element"> 
+                        header4
+                    </div>
+                    <div class="fb-row element">
+                        <a href="https://search.brave.com">
+                            button4-1
+                        </a>
+                        <input>
+                        </input>
+                    </div>
+                    <div class="fb-row element">
+                        <a href="https://search.brave.com">
+                            button4-2
+                        </a>
+                        <input>
+                        </input>
+                    </div>
+                </div>
+                <div class="fb-column set">
+                    <div class="header element"> 
+                        header5
+                    </div>
+                    <a href="https://search.brave.com" class="element">
+                        button5-1
+                    </a>
+                    <a href="https://search.brave.com" class="element">
+                        button5-2
+                    </a>
+                    <a href="https://search.brave.com" class="element">
+                        button5-3
+                    </a>
+                </div>
+                <div class="fb-column set">
+                    <div class="header element"> 
+                        header6
+                    </div>
+                    <div class="fb-row element">
+                        <a href="https://search.brave.com">
+                            button6-1
+                        </a>
+                        <input>
+                        </input>
+                    </div>
+                    <div class="fb-row element">
+                        <a href="https://search.brave.com">
+                            button6-2
+                        </a>
+                        <input>
+                        </input>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
