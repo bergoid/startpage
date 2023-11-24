@@ -50,18 +50,17 @@
             {
                 display: grid;
                 grid-template-columns: 1fr 2fr;
+                gap: 3px;
                 
                 margin: 1em;
-                gap: 3px;
                 background-color: #AACCEE;
                 padding: 3px;
+                text-align: center;
             }
 
             .header
             {
                 grid-row: 1;
-                grid-column: 1 / span 2;
-                text-align: center;
             }
 
             .span2
@@ -72,7 +71,6 @@
             .cell
             {
                 background-color: rgba(255, 255, 255, 0.8);
-                text-align: center;
                 padding: 10px;
             }
         </style>
@@ -82,7 +80,7 @@
         <div class="fb-row fb-space-around">
             <div class="fb-column">
                 <div class="set">
-                    <div class="header">
+                    <div class="header span2">
                         header1
                     </div>
                     <a href="https://search.brave.com" class="cell span2">
@@ -93,7 +91,7 @@
                     </a>
                 </div>
                 <div class="set">
-                    <div class="header">
+                    <div class="header span2">
                         header2
                     </div>
                     <a href="https://search.brave.com" class="cell span2">
@@ -109,7 +107,7 @@
             </div>
             <div class="fb-column">
                 <div class="set">
-                    <div class="header"> 
+                    <div class="header span2"> 
                         header3
                     </div>
                     <a href="https://search.brave.com" class="cell span2">
@@ -122,7 +120,7 @@
             </div>
             <div class="fb-column">
                 <div class="set">
-                    <div class="header"> 
+                    <div class="header span2"> 
                         header4
                     </div>
                     <a href="https://search.brave.com" class="cell">
@@ -137,7 +135,7 @@
                     </input>
                 </div>
                 <div class="set">
-                    <div class="header"> 
+                    <div class="header span2"> 
                         header5
                     </div>
                     <a href="https://search.brave.com" class="cell span2">
@@ -151,7 +149,7 @@
                     </a>
                 </div>
                 <div class="set">
-                    <div class="header"> 
+                    <div class="header span2"> 
                         header6
                     </div>
                     <a href="https://search.brave.com" class="cell">
