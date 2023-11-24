@@ -48,22 +48,31 @@
 
             .set
             {
+                display: grid;
+                grid-template-columns: auto;
                 margin: 1em;
+                gap: 3px;
+                background-color: #AACCEE;
+                padding: 3px;
+            }
+
+            .set-row
+            {
+                text-align: center;
+/*                border: 1px solid #c0c0c0;*/
             }
             
-            .element
+            .set-cell
             {
-                border: 1px solid #c0c0c0;
+                background-color: rgba(255, 255, 255, 0.8);
+                text-align: center;
+                padding: 10px;
             }
             
             .header
             {
-                /*background-color: #000080;*/
-                padding: 1em;
-                color: #000000;
-                font-weight: bold;
-                display: flex;
-                flex-flow: column wrap;
+/*                grid-column: 1 / span 2;
+                grid-row: 1;*/
             }
             
         </style>
@@ -72,58 +81,58 @@
     <body>
         <div class="fb-row fb-space-around">
             <div class="fb-column">
-                <div class="fb-column set">
-                    <div class="header element">
+                <div class="set">
+                    <div class="header set-row">
                         header1
                     </div>
-                    <a href="https://search.brave.com" class="element">
+                    <a href="https://search.brave.com" class="set-row set-cell">
                         button1-1
                     </a>
-                    <a href="https://search.brave.com" class="element">
+                    <a href="https://search.brave.com" class="set-row set-cell">
                         button1-2
                     </a>
                 </div>
-                <div class="fb-column set">
-                    <div class="header element">
+                <div class="set">
+                    <div class="header set-row">
                         header2
                     </div>
-                    <a href="https://search.brave.com" class="element">
+                    <a href="https://search.brave.com" class="set-row set-cell">
                         button2-1
                     </a>
-                    <a href="https://search.brave.com" class="element">
+                    <a href="https://search.brave.com" class="set-row set-cell">
                         button2-2
                     </a>
-                    <a href="https://search.brave.com" class="element">
+                    <a href="https://search.brave.com" class="set-row set-cell">
                         button2-3
                     </a>
                 </div>
             </div>
             <div class="fb-column">
-                <div class="fb-column set">
-                    <div class="header element"> 
+                <div class="set">
+                    <div class="header set-row"> 
                         header3
                     </div>
-                    <a href="https://search.brave.com" class="element">
+                    <a href="https://search.brave.com" class="set-row set-cell">
                         button3-1
                     </a>
-                    <a href="https://search.brave.com" class="element">
+                    <a href="https://search.brave.com" class="set-row set-cell">
                         button3-2
                     </a>
                 </div>
             </div>
             <div class="fb-column">
-                <div class="fb-column set">
-                    <div class="header element"> 
+                <div class="set">
+                    <div class="header set-row"> 
                         header4
                     </div>
-                    <div class="fb-row element">
+                    <div class="fb-row set-row">
                         <a href="https://search.brave.com">
                             button4-1
                         </a>
                         <input>
                         </input>
                     </div>
-                    <div class="fb-row element">
+                    <div class="fb-row set-row">
                         <a href="https://search.brave.com">
                             button4-2
                         </a>
@@ -131,32 +140,32 @@
                         </input>
                     </div>
                 </div>
-                <div class="fb-column set">
-                    <div class="header element"> 
+                <div class="set">
+                    <div class="header set-row"> 
                         header5
                     </div>
-                    <a href="https://search.brave.com" class="element">
+                    <a href="https://search.brave.com" class="set-row set-cell">
                         button5-1
                     </a>
-                    <a href="https://search.brave.com" class="element">
+                    <a href="https://search.brave.com" class="set-row set-cell">
                         button5-2
                     </a>
-                    <a href="https://search.brave.com" class="element">
+                    <a href="https://search.brave.com" class="set-row set-cell">
                         button5-3
                     </a>
                 </div>
-                <div class="fb-column set">
-                    <div class="header element"> 
+                <div class="set">
+                    <div class="header set-row"> 
                         header6
                     </div>
-                    <div class="fb-row element">
+                    <div class="fb-row set-row">
                         <a href="https://search.brave.com">
                             button6-1
                         </a>
                         <input>
                         </input>
                     </div>
-                    <div class="fb-row element">
+                    <div class="fb-row set-row">
                         <a href="https://search.brave.com">
                             button6-2
                         </a>
