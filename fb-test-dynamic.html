@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+
+        <style type="text/css">
+            body
+            {
+                font-family: sans-serif;
+                font-size: 1.5vmax;
+            }
+
+            input
+            {
+                font-size: 1em;
+            }
+
+            a
+            {
+                padding: 1em;
+                color: #800000;
+                text-decoration: none;
+            }
+
+            a:hover
+            {
+                color: #ffffff;
+                background-color: #800000;
+            }
+
+            .fb-space-around
+            {
+                justify-content: space-around;
+            }
+            
+            .fb-row
+            {
+                display: flex;
+                flex-flow: row wrap;
+            }
+            
+            .fb-column
+            {
+                display: flex;
+                flex-flow: column wrap;
+            }
+
+            .set
+            {
+                margin: 1em;
+            }
+            
+            .element
+            {
+                border: 1px solid #c0c0c0;
+            }
+            
+            .header
+            {
+                /*background-color: #000080;*/
+                padding: 1em;
+                color: #000000;
+                font-weight: bold;
+                display: flex;
+                flex-flow: column wrap;
+            }
+            
+        </style>
+
+        <script type="text/javascript">
+            //
+            // URL-encode argument string
+            // Adhere to http://tools.ietf.org/html/rfc3986
+            // See: https://developer.mozilla.org/nl/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
+            var encodeUrl = function(str)
+            {
+                return encodeURIComponent(str).replace
+                (
+                    /[!'()*]/g,
+                    function(c)
+                    {
+                        return '%' + c.charCodeAt(0).toString(16);
+                    }
+                );
+            };
+
+            //
+            // URL-encode each word in a query and concatenate them with '+' signs in between.
+            var encodeQuery = function(query)
+            {
+                return query
+                    .split(" ")
+                    .map(encodeUrl)
+                    .join("+");
+            };
+
+            var startpage_contents = [
+                /* Column 1 */
+                [
+                    {
+                        "header": "Misc",
+                        "contents":
+                        [
+                            { url:"http://www.example.com/", name:"Example" },
+                            { url:"https://proton.me", name:"Proton Mail" }
+                        ]
+                    }
+                ],
+
+                /* Column 2 */
+                [
+                    {
+                        "header": "Frontend frameworks",
+                        "contents":
+                        [
+                            { url:"https://lit.dev/", name:"Lit" },
+                            { url:"https://svelte.dev/", name:"Svelte" },
+                            { url:"https://alpinejs.dev/", name:"Alpine.js" },
+                            { url:"https://htmx.org/", name:"htmx" }
+                        ]
+                    },
+                    {
+                        "header": "Online tools",
+                        "contents":
+                        [
+                            { url:"https://flems.io/", name:"flems.io" },
+                            { url:"https://replit.com/", name:"Replit" },
+                            { url:"https://www.typescriptlang.org/play/", name:"TS Playground" },
+                            { url:"https://rentry.co/", name:"rentry.co" }
+                        ]
+                    }
+                ],
+
+                /* Column 3 */
+                [
+                    {
+                        "header": "Search",
+                        "contents":
+                        [
+                            [ { url:"https://search.brave.com", name:"Brave Search" }, { baseUrl: "https://search.brave.com/search?q=", queryFun: encodeQuery } ],
+                            [ { url:"https://search.brave.com/", name:"Brave Images" }, { baseUrl: "https://search.brave.com/images?q=", queryFun: encodeQuery } ],
+                            [ { url:"https://www.openstreetmap.org/", name:"OpenStreetMap" }, { baseUrl: "https://www.openstreetmap.org/search?query=", queryFun: encodeQuery } ],
+                            [ { url:"https://en.wikipedia.org", name:"Wikipedia" }, { baseUrl: "https://en.wikipedia.org/wiki/Special:Search?search=", queryFun: encodeQuery } ]
+                        ]
+                    }
+                ],
+            ];
+
+            var build_element_single = function(element)
+            {
+                let html = `<a class="element" href="${element.url}">
+                    ${element.name}
+                    </a>
+                    `;
+
+                return html;
+            }
+
+            var build_element_double = function(element)
+            {
+
+                let html = `<div class "fb-row">`;
+
+                html += `<a class="element" href="${element[0].url}">
+                    ${element[0].name}
+                    </a>
+                    `;
+
+                html += `<input>
+                    </input>
+                    `;
+
+                html += `</div>`;
+
+                return html;
+            }
+
+            var build_element = function(element)
+            {
+                // TODO : introspect element and distinguish between _single & _double
+                if (Array.isArray(element))
+                    return build_element_double(element);
+                else
+                    return build_element_single(element);
+            }
+
+            var build_set = function(set)
+            {
+                let html = `<div class="header element">${set.header}</div>`;
+
+                if ( (set.contents) && (set.contents[0]) )
+                    // if (set.contents[0].)
+                    set.contents.forEach(element => {
+                    html += build_element(element)
+                    });
+
+
+                // set.contents.forEach(element => {
+                //     html += build_element(element)
+                // });
+
+                return html;
+            }
+
+            var build_column = function(column)
+            {
+                let html = ``;
+
+                column.forEach(set => {
+                    html += `<div class="fb-column set">
+                        ${build_set(set)}
+                        </div>
+                        `;
+                });
+
+                return html;
+            }
+
+            var build_html = function(data)
+            {
+                //html = JSON.stringify(data);
+
+                let columns_html = ``;
+
+                data.forEach(column => {
+                    columns_html += `<div class="fb-column">
+                        ${build_column(column)}
+                        </div>
+                        `;
+                });
+
+                let html = `<div class="fb-row fb-space-around">
+                    ${columns_html}
+                    </div>
+                    `;
+
+                return html;
+            }
+
+            var go = function()
+            {
+                console.log("Hello!");
+
+                let html = build_html(startpage_contents);
+
+                document.body.insertAdjacentHTML("beforeend", html);
+            }
+
+           </script>
+
+    </head>
+
+    <body onload="go()">
+    </body>
+</html>

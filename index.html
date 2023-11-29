@@ -9,14 +9,17 @@
         TODO:
         -----
 
-        . arbitrary number of tables
-            . ability to group them:
-                - one group next to eachother if viewport
-                  allows it, under eachother on smaller displays.
-                - different groups are always under eachother, no matter
-                  how much room.
+        . Put tables under eachother if not enough room
 
-        . collapsible lists of links
+        v arbitrary number of tables
+            x ability to group tables:
+            x one group next to eachother if viewport
+                allows it, under eachother on smaller displays.
+            x different groups are always under eachother, no matter
+                how much room.
+
+
+        x collapsible lists of links
 
         v inputCell focus:
             x separate div whose size & pos matches focused cell?
@@ -60,36 +63,49 @@
             //
             // Edit this data structure to change the content of the page.
             // The properties 'baseUrl' and 'queryFun' construct a URL as follows:
-            //     If 'value' is the string entered in the search box, then : URL = baseUrl + queryFun (value)
-            //     In the examples given here, only two different functions are necessary to convert search queries.
-            //     Implement your own function when needed.
+            //     If 'value' is the string entered in the search box, then : URL = baseUrl + queryFun(value)
+            
             var spdata = {
-
-                search :
-                [
-                    [ { url:"http://www.google.com", name:"Google" }, { baseUrl: "https://www.google.com/search?q=", queryFun: encodeQuery } ],
-                    [ { url:"http://maps.google.com", name:"Google Maps" }, { baseUrl: "https://www.google.com/maps/search/", queryFun: encodeQuery } ],
-                    [ { url:"http://images.google.com", name:"Google Images" }, { baseUrl: "https://www.google.com/search?tbm=isch&q=", queryFun: encodeQuery } ],
-                    [ { url:"https://www.flickr.com", name:"flickr.com" }, { baseUrl: "https://www.flickr.com/search/?text=", queryFun: encodeUrl } ],
-                    [ { url:"https://en.wikipedia.org", name:"Wikipedia" }, { baseUrl: "https://en.wikipedia.org/wiki/Special:Search?search=", queryFun: encodeQuery } ]
-                ],
 
                 sites :
                 [
-                    { url:"http://www.example.com/", name:"Example" },
-                    { url:"https://mail.google.com", name:"GMail" }
+                    [
+                        { url:"http://www.example.com/", name:"Example" },
+                        { url:"https://proton.me", name:"Proton Mail" }
+                    ],
+                    
+                    [
+                        { url:"https://lit.dev/", name:"Lit" },
+                        { url:"https://svelte.dev/", name:"Svelte" },
+                        { url:"https://alpinejs.dev/", name:"Alpine.js" },
+                        { url:"https://htmx.org/", name:"htmx" }
+                    ],
+
+                    [
+                        { url:"https://flems.io/", name:"flems.io" },
+                        { url:"https://replit.com/", name:"Replit" },
+                        { url:"https://www.typescriptlang.org/play/", name:"TS Playground" },
+                        { url:"https://rentry.co/", name:"rentry.co" },
+                        
+                        { url:"https://regex101.com/", name:"Regex 101" },
+                        { url:"https://jwt.io/", name:"JWT.io" },
+                    ]
+                ],
+
+                search :
+                [
+                    [ { url:"https://search.brave.com", name:"Brave Search" }, { baseUrl: "https://search.brave.com/search?q=", queryFun: encodeQuery } ],
+                    [ { url:"https://search.brave.com/", name:"Brave Images" }, { baseUrl: "https://search.brave.com/images?q=", queryFun: encodeQuery } ],
+                    [ { url:"https://www.openstreetmap.org/", name:"OpenStreetMap" }, { baseUrl: "https://www.openstreetmap.org/search?query=", queryFun: encodeQuery } ],
+                    [ { url:"https://en.wikipedia.org", name:"Wikipedia" }, { baseUrl: "https://en.wikipedia.org/wiki/Special:Search?search=", queryFun: encodeQuery } ]
                 ]
 
             };
 
-            // The position of the initial focus on page load:
-            var startRow = 0;
-            var startColumn = 1;
-
             // End of configuration part
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
-            spdata.all = [ spdata.sites, spdata.search, spdata.search ];
+            spdata.all = spdata.sites.concat([spdata.search, spdata.search]);
 
             var wi = {};
 
@@ -257,7 +273,7 @@
 
                     if (element)
                     {
-                        if (column>1)
+                        if (column==spdata.all.length-1)
                             element = element.firstChild;
                         element.focus();
                         return true;
@@ -284,18 +300,18 @@
                 //
                 var onFocusInput = function(event, rowIndex)
                 {
-                    var elem = ra.el(getId(rowIndex,2));
+                    var elem = ra.el(getId(rowIndex,spdata.all.length-1));
                     ra.removeClass(elem, "blurredCell");
                     ra.addClass(elem, "focusedCell");
                     ra.removeClass(elem.firstChild, "blurredCell");
                     ra.addClass(elem.firstChild, "focusedCell");
-                    onFocus(rowIndex, 2);
+                    onFocus(rowIndex, spdata.all.length-1);
                 };
 
                 //
                 var onBlurInput = function(event, rowIndex)
                 {
-                    var elem = ra.el(getId(rowIndex,2));
+                    var elem = ra.el(getId(rowIndex,spdata.all.length-1));
                     ra.removeClass(elem, "focusedCell");
                     ra.addClass(elem, "blurredCell");
                     ra.removeClass(elem.firstChild, "focusedCell");
@@ -339,7 +355,7 @@
                                 break;
 
                             case 39: // right
-                                if (currentFocus.column<2)
+                                if (currentFocus.column<spdata.all.length-1)
                                 {
                                     event.preventDefault();
                                     focusCell(Math.min(currentFocus.row, spdata.all[currentFocus.column+1].length-1), currentFocus.column+1);
@@ -347,12 +363,11 @@
                                 break;
 
                             case 27: // escape
-                                if (currentFocus.column>1)
+                                if (currentFocus.column==spdata.all.length-1)
                                 {
                                     var elem = ra.el(getId(currentFocus.row, currentFocus.column));
                                     if (elem)
                                     {
-                                        console.log("row: " + currentFocus.row + ", col: " + currentFocus.column + ", value: " + elem.firstChild.value);
                                         elem.blur();
                                         setTimeout(function(){ elem.firstChild.value = ''; elem.focus(); }, 0);
                                     }
@@ -436,87 +451,95 @@
                                 {
                                     className: "layoutRow"
                                 },
-                                [
-                                    ra.crel
-                                    (
-                                        "div",
-                                        {
-                                            className: "layoutCell"
-                                        },
-                                        [
-                                            ra.crel
-                                            (
-                                                "div",
-                                                {
-                                                    className: "pageTable"
-                                                },
-                                                spdata.sites.map
+                                spdata.sites.map
+                                (
+                                    function(sitesColumn, columnIndex)
+                                    {
+                                        return ra.crel
+                                        (
+                                            "div",
+                                            {
+                                                className: "layoutCell"
+                                            },
+                                            [
+                                                ra.crel
                                                 (
-                                                    function(dataElem, rowIndex)
+                                                    "div",
                                                     {
-                                                        return ra.crel
-                                                        (
-                                                            "div",
-                                                            {
-                                                                className: "pageRow"
-                                                            },
-                                                            [
-                                                                cellDOM(dataElem, rowIndex, 0, "linkCellRed")
-                                                            ]
-                                                        );
-                                                    }
-                                                )
-                                            )
-                                        ]
-                                    ),
-                                    ra.crel
-                                    (
-                                        "div",
-                                        {
-                                            className: "layoutCell"
-                                        },
-                                        [
-                                            ra.crel
-                                            (
-                                                "div",
-                                                {
-                                                    className: "pageTable"
-                                                },
-                                                spdata.search.map
-                                                (
-                                                    function(dataRow, rowIndex)
-                                                    {
-                                                        return ra.crel
-                                                        (
-                                                            "div",
-                                                            {
-                                                                className: "pageRow"
-                                                            },
-                                                            dataRow.map
+                                                        className: "pageTable"
+                                                    },
+                                                    sitesColumn.map
+                                                    (
+                                                        function(dataElem, rowIndex)
+                                                        {
+                                                            return ra.crel
                                                             (
-                                                                function(dataElem, colIndex)
+                                                                "div",
                                                                 {
-                                                                    return cellDOM(dataElem, rowIndex, colIndex+1, "linkCellBlue");
-                                                                }
-                                                            )
-                                                        );
-                                                    }
+                                                                    className: "pageRow"
+                                                                },
+                                                                [
+                                                                    cellDOM(dataElem, rowIndex, columnIndex, "linkCellRed")
+                                                                ]
+                                                            );
+                                                        }
+                                                    )
                                                 )
-                                            )
-                                        ]
-                                    )
-                                ]
+                                            ]
+                                        );
+                                    }
+                                ).concat
+                                (
+                                    [
+                                        ra.crel
+                                        (
+                                            "div",
+                                            {
+                                                className: "layoutCell"
+                                            },
+                                            [
+                                                ra.crel
+                                                (
+                                                    "div",
+                                                    {
+                                                        className: "pageTable"
+                                                    },
+                                                    spdata.search.map
+                                                    (
+                                                        function(dataRow, rowIndex)
+                                                        {
+                                                            return ra.crel
+                                                            (
+                                                                "div",
+                                                                {
+                                                                    className: "pageRow"
+                                                                },
+                                                                dataRow.map
+                                                                (
+                                                                    function(dataElem, colIndex)
+                                                                    {
+                                                                        return cellDOM(dataElem, rowIndex, spdata.sites.length+colIndex, "linkCellBlue");
+                                                                    }
+                                                                )
+                                                            );
+                                                        }
+                                                    )
+                                                )
+                                            ]
+                                        )
+                                    ]
+                                )
                             )
                         ]
                     );
                 };
 
                 //
-                var go = function(state)
+                var go = function()
                 {
                     ra.body().appendChild(pageDOM());
                     ra.body().onkeydown = onKeyDown;
-                    focusCell(startRow, startColumn);
+                    focusCell(0, spdata.all.length-2);
                 };
 
                 //////////////////////////////

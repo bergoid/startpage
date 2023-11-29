@@ -1,4 +1,27 @@
-- ESC to clear input field
-- use flexbox
 
+        . alignment of button / input pairs: CSS Grid
+        . cursor highlight & navigation
 
+        . media queries for light/dark theme
+        . search suggestions
+
+        . Put tables under eachother if not enough room
+
+        v ESC to clear input field
+        v use flexbox
+        v different sections per column
+            v a title at top of every section
+        . smaller font
+        v replace custom modules with vanilla JS
+            v wi
+            v ra
+
+===============================================================================
+
+https://medium.com/@tforward/get-html-to-the-dom-fast-with-js-template-literals-insertadjacenthtml-24b8aa4e8807
+
+https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
+
+================================================================================
