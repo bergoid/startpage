@@ -8,7 +8,7 @@
             {
                 font-family: sans-serif;
                 font-size: 1.5vmax;
-                background-color: #e8e8e8;
+                /*background-color: #e8e8e8;*/
             }
 
             input
@@ -20,14 +20,7 @@
 
             a
             {
-                color: #800000;
                 text-decoration: none;
-            }
-
-            a:hover
-            {
-                color: #ffffff;
-                background-color: #800000;
             }
 
             .fb-space-around
@@ -67,11 +60,10 @@
                 grid-column: 1 / span 2;
             }
 
-            .cell
+/*            .cell
             {
-/*                background-color: rgba(255, 255, 255, 0.8);*/
                 background-color: #f0f0f0;
-            }
+            }*/
 
             .header, .cell
             {
@@ -80,6 +72,58 @@
                 padding-top: .2em;
                 padding-bottom: .2em;
             }
+
+            @media (prefers-color-scheme: light)
+            {
+                body
+                {
+                    background-color: #e8e8e8;
+                }
+
+                .cell
+                {
+                    background-color: #f0f0f0;
+                }
+
+                a
+                {
+                    color: #800000;
+                }
+
+                a:hover
+                {
+                    color: #ffffff;
+                    background-color: #800000;
+                }
+            }
+
+            @media (prefers-color-scheme: dark)
+            {
+                body
+                {
+                    background-color: #202020;
+                    color: #808080;
+                }
+
+                .cell
+                {
+                    background-color: #282828;
+                }
+
+                a
+                {
+                    color: #E07070;
+                }
+
+                a:hover
+                {
+/*                    color: #e0e0e0;
+                    background-color: #404040;*/
+                    color: #282828;
+                    background-color: #E07070;
+                }
+            }
+
         </style>
 
         <script type="text/javascript">
