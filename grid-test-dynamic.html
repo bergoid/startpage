@@ -8,7 +8,6 @@
             {
                 font-family: sans-serif;
                 font-size: 1.5vmax;
-                /*background-color: #e8e8e8;*/
             }
 
             input
@@ -47,7 +46,6 @@
                 gap: .1em;
                 margin: 1em;
                 padding: .1em;
-/*                background-color: #AACCEE;*/
             }
 
             .header
@@ -60,10 +58,15 @@
                 grid-column: 1 / span 2;
             }
 
-/*            .cell
+            .cell
             {
-                background-color: #f0f0f0;
-            }*/
+                border-radius: .15em;
+            }
+
+            .cell:focus
+            {
+                outline: none;
+            }
 
             .header, .cell
             {
@@ -95,33 +98,48 @@
                     color: #ffffff;
                     background-color: #800000;
                 }
+
+                input
+                {
+                    caret-color: #000000;
+                }
             }
 
             @media (prefers-color-scheme: dark)
             {
                 body
                 {
-                    background-color: #202020;
-                    color: #808080;
+                    background-color: #242424;
+                    color: #a0a0a0;
                 }
 
                 .cell
                 {
-                    background-color: #282828;
+                    background-color: #303030;
+                }
+
+                .cell:focus
+                {
+                    background-color: #404040;
                 }
 
                 a
                 {
-                    color: #E07070;
+                    color: #f06292;
                 }
 
                 a:hover
                 {
-/*                    color: #e0e0e0;
-                    background-color: #404040;*/
-                    color: #282828;
-                    background-color: #E07070;
+                    color: #303030;
+                    background-color: #f06292;
                 }
+
+                input
+                {
+                    color: #a0a0a0;
+                    caret-color: #a0a0a0;
+                }
+
             }
 
         </style>
@@ -198,58 +216,90 @@
                         [
                             [ { url:"https://search.brave.com", name:"Brave Search" }, { baseUrl: "https://search.brave.com/search?q=", queryFun: encodeQuery } ],
                             [ { url:"https://search.brave.com/", name:"Brave Images" }, { baseUrl: "https://search.brave.com/images?q=", queryFun: encodeQuery } ],
-                            [ { url:"https://www.openstreetmap.org/", name:"OpenStreetMap" }, { baseUrl: "https://www.openstreetmap.org/search?query=", queryFun: encodeQuery } ],
+                            [ { url:"https://www.openstreetmap.org/", name:"OpenStreetMap" }, { baseUrl: "https://www.openstreetmap.org/search?query=", queryFun: encodeQuery, default: true } ],
                             [ { url:"https://en.wikipedia.org", name:"Wikipedia" }, { baseUrl: "https://en.wikipedia.org/wiki/Special:Search?search=", queryFun: encodeQuery } ]
                         ]
                     }
                 ],
             ];
 
-            var build_element = function(element)
+            var cursor = null;
+
+            var get_id = function(pos)
+            {
+                return `c${pos.col}r${pos.row}i${pos.idx}`;
+            };
+
+            var focus_cell = function(pos)
+            {
+                if (!pos)
+                    return;
+
+                // console.log(`pos: ${JSON.stringify(pos)}`);
+
+                var element = document.getElementById(get_id(pos));
+
+                if (element)
+                    element.focus();
+                // else
+                //     console.log(`ERROR: could not find element with id == ${get_id(pos)}`);
+
+            };
+
+            var build_element = function(element, pos)
             {
                 let html = ``;
 
                 if (Array.isArray(element))
                 {
-                    html += `<a class="cell" href="${element[0].url}">
+                    for (const i of [0, 1])
+                        if (element[i].default)
+                            cursor = { ...pos, idx: i+1 };
+
+                    html += `<a class="cell" id="c${pos.col}r${pos.row}i1" href="${element[0].url}">
                     ${element[0].name}
                     </a>
                     `;
 
-                    html += `<input class="cell">
+                    html += `<input class="cell" id="c${pos.col}r${pos.row}i2">
                         </input>
                         `;
                 }
                 else
                 {
-                    html += `<a class="cell span2" href="${element.url}">
+                    if (element.default)
+                        cursor = { ...pos, idx: 1 };
+
+                    html += `<a class="cell span2" id="c${pos.col}r${pos.row}i1" href="${element.url}">
                     ${element.name}
                     </a>
                     `;
                 }
 
+                pos.row++;
+
                 return html;
             }
 
-            var build_set = function(set)
+            var build_set = function(set, pos)
             {
                 let html = `<div class="header span2">${set.header}</div>`;
 
                 if (set.contents)
                     set.contents.forEach(element => {
-                        html += build_element(element)
+                        html += build_element(element, pos)
                         });
 
                 return html;
             }
 
-            var build_column = function(column)
+            var build_column = function(column, pos)
             {
                 let html = ``;
 
                 column.forEach(set => {
                     html += `<div class="set">
-                        ${build_set(set)}
+                        ${build_set(set, pos)}
                         </div>
                         `;
                 });
@@ -260,12 +310,15 @@
             var build_html = function(data)
             {
                 let columns_html = ``;
+                let pos = { col: 1, row: 1 };
 
                 data.forEach(column => {
                     columns_html += `<div class="fb-column">
-                        ${build_column(column)}
+                        ${build_column(column, pos)}
                         </div>
                         `;
+                    pos.col++;
+                    pos.row = 1;
                 });
 
                 let html = `<div class="fb-row fb-space-around">
@@ -276,11 +329,69 @@
                 return html;
             }
 
-            var go = function()
+            var get_key_code = function(event)
+            {
+                return (typeof event.which === "number") ? event.which : event.keyCode;
+            }
+
+            var on_key_down = function(event)
+                {
+                    // if (!cursor)
+                    //     focusCell(0,0);
+                    // else
+                        switch(ra.get_key_code(event))
+                        {
+                            case 38: // up
+                                if (cursor.row>0)
+                                    focusCell(cursor.row-1, cursor.column);
+                                break;
+
+                            case 40: // down
+                                if (cursor.row<spdata.all[cursor.column].length-1)
+                                    focusCell(cursor.row+1, cursor.column);
+                                break;
+
+                            case 37: // left
+                                if ((cursor.column>0) && (!event.target.selectionStart || (event.target.selectionStart<1)))
+                                    focusCell(Math.min(cursor.row, spdata.all[cursor.column-1].length-1), cursor.column-1);
+                                break;
+
+                            case 39: // right
+                                if (cursor.column<spdata.all.length-1)
+                                {
+                                    event.preventDefault();
+                                    focusCell(Math.min(cursor.row, spdata.all[cursor.column+1].length-1), cursor.column+1);
+                                }
+                                break;
+
+                            case 27: // escape
+                                if (cursor.column==spdata.all.length-1)
+                                {
+                                    var elem = ra.el(getId(cursor.row, cursor.column));
+                                    if (elem)
+                                    {
+                                        elem.blur();
+                                        setTimeout(function(){ elem.firstChild.value = ''; elem.focus(); }, 0);
+                                    }
+                                }
+                                break;
+
+                            default:
+                                break;
+                        }
+                };
+
+                var go = function()
             {
                 let html = build_html(startpage_contents);
 
                 document.body.insertAdjacentHTML("beforeend", html);
+
+                focus_cell(cursor);
+
+                console.log(`cursor: ${JSON.stringify(cursor)}`);
+
+
             }
 
            </script>
