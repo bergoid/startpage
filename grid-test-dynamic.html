@@ -4,7 +4,7 @@
         <meta charset="utf-8">
 
         <style type="text/css">
-            body
+            body, input
             {
                 font-family: sans-serif;
                 font-size: 1.5vmax;
@@ -12,7 +12,7 @@
 
             input
             {
-                font-size: 1em;
+/*                font-size: 1em;*/
                 border: none;
                 outline: none;
             }
@@ -224,6 +224,7 @@
             ];
 
             var cursor = null;
+            var dimensions = [];
 
             var get_id = function(pos)
             {
@@ -235,12 +236,16 @@
                 if (!pos)
                     return;
 
-                // console.log(`pos: ${JSON.stringify(pos)}`);
+                console.log(`focus_cell(), pos: ${JSON.stringify(pos)}`);
 
                 var element = document.getElementById(get_id(pos));
 
                 if (element)
+                {
                     element.focus();
+                    cursor = pos;
+                    console.log(`focus_cell(), cursor: ${JSON.stringify(cursor)}`);
+                }
                 // else
                 //     console.log(`ERROR: could not find element with id == ${get_id(pos)}`);
 
@@ -276,6 +281,7 @@
                     `;
                 }
 
+                dimensions[pos.col-1] = pos.row;
                 pos.row++;
 
                 return html;
@@ -335,53 +341,54 @@
             }
 
             var on_key_down = function(event)
-                {
-                    // if (!cursor)
-                    //     focusCell(0,0);
-                    // else
-                        switch(ra.get_key_code(event))
-                        {
-                            case 38: // up
-                                if (cursor.row>0)
-                                    focusCell(cursor.row-1, cursor.column);
-                                break;
+            {
+                // if (!cursor)
+                //     focus_cell(0,0);
+                // else
+                    switch(get_key_code(event))
+                    {
+                        case 38: // up
+                            console.log("up");
+                            if (cursor.row>0)
+                                focus_cell( { "row": cursor.row-1, "col": cursor.col, "idx": cursor.idx } );
+                            break;
 
-                            case 40: // down
-                                if (cursor.row<spdata.all[cursor.column].length-1)
-                                    focusCell(cursor.row+1, cursor.column);
-                                break;
+                        case 40: // down
+                            if (cursor.row<dimensions[cursor.col-1])
+                                focus_cell( { "row": cursor.row+1, "col": cursor.col, "idx": cursor.idx } );
+                            break;
 
-                            case 37: // left
-                                if ((cursor.column>0) && (!event.target.selectionStart || (event.target.selectionStart<1)))
-                                    focusCell(Math.min(cursor.row, spdata.all[cursor.column-1].length-1), cursor.column-1);
-                                break;
+                        case 37: // left
+                            if ((cursor.col>1) && (!event.target.selectionStart || (event.target.selectionStart<1)))
+                                focus_cell( { "row": Math.min(cursor.row, dimensions[cursor.col-1]-1), "col": cursor.col-1, "idx": cursor.idx });
+                            break;
 
-                            case 39: // right
-                                if (cursor.column<spdata.all.length-1)
+                        case 39: // right
+                            if (cursor.col<dimensions.length)
+                            {
+                                event.preventDefault();
+                                focus_cell(Math.min(cursor.row, dimensions[cursor.col+1].length-1), cursor.col+1);
+                            }
+                            break;
+
+                        case 27: // escape
+                            if (cursor.idx == 2)
+                            {
+                                var elem = document.getElementById(get_id(cursor));
+                                if (elem)
                                 {
-                                    event.preventDefault();
-                                    focusCell(Math.min(cursor.row, spdata.all[cursor.column+1].length-1), cursor.column+1);
+                                    elem.blur();
+                                    setTimeout(function(){ elem.value = ''; elem.focus(); }, 0);
                                 }
-                                break;
+                            }
+                            break;
 
-                            case 27: // escape
-                                if (cursor.column==spdata.all.length-1)
-                                {
-                                    var elem = ra.el(getId(cursor.row, cursor.column));
-                                    if (elem)
-                                    {
-                                        elem.blur();
-                                        setTimeout(function(){ elem.firstChild.value = ''; elem.focus(); }, 0);
-                                    }
-                                }
-                                break;
+                        default:
+                            break;
+                    }
+            };
 
-                            default:
-                                break;
-                        }
-                };
-
-                var go = function()
+            var go = function()
             {
                 let html = build_html(startpage_contents);
 
@@ -389,9 +396,10 @@
 
                 focus_cell(cursor);
 
+                document.body.onkeydown = on_key_down;
+
                 console.log(`cursor: ${JSON.stringify(cursor)}`);
-
-
+                console.log(`dimensions: ${JSON.stringify(dimensions)}`);
             }
 
            </script>
