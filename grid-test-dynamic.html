@@ -209,10 +209,10 @@
                         "header": "Search",
                         "contents":
                         [
-                            [ { url:"https://search.brave.com", name:"Brave Search" }, { baseUrl: "https://search.brave.com/search?q=", queryFun: encodeQuery } ],
-                            [ { url:"https://search.brave.com/", name:"Brave Images" }, { baseUrl: "https://search.brave.com/images?q=", queryFun: encodeQuery } ],
-                            [ { url:"https://www.openstreetmap.org/", name:"OpenStreetMap" }, { baseUrl: "https://www.openstreetmap.org/search?query=", queryFun: encodeQuery, default: true } ],
-                            [ { url:"https://en.wikipedia.org", name:"Wikipedia" }, { baseUrl: "https://en.wikipedia.org/wiki/Special:Search?search=", queryFun: encodeQuery } ]
+                            [ { url:"https://search.brave.com", name:"Brave Search" }, { baseUrl: "https://search.brave.com/search?q=", queryFun: "encodeQuery" } ],
+                            [ { url:"https://search.brave.com/", name:"Brave Images" }, { baseUrl: "https://search.brave.com/images?q=", queryFun: "encodeQuery" } ],
+                            [ { url:"https://www.openstreetmap.org/", name:"OpenStreetMap" }, { baseUrl: "https://www.openstreetmap.org/search?query=", queryFun: "encodeQuery", default: true } ],
+                            [ { url:"https://en.wikipedia.org", name:"Wikipedia" }, { baseUrl: "https://en.wikipedia.org/wiki/Special:Search?search=", queryFun: "encodeQuery" } ]
                         ]
                     }
                 ],
@@ -262,13 +262,14 @@
                             cursor = { ...pos, idx: i+1 };
 
                     html += `<a class="cell" id="c${pos.col}r${pos.row}i1" href="${element[0].url}"
-                    onfocus="on_cell_focused({row: ${pos.row},col: ${pos.col},idx: 1})">
+                    onfocus="on_cell_focused({row: ${pos.row}, col: ${pos.col}, idx: 1})">
                     ${element[0].name}
                     </a>
                     `;
 
                     html += `<input class="cell" id="c${pos.col}r${pos.row}i2"
-                    onfocus="on_cell_focused({row: ${pos.row},col: ${pos.col},idx: 2})">
+                    onfocus="on_cell_focused({row: ${pos.row}, col: ${pos.col}, idx: 2})"
+                    onkeyup="on_key_up(event, this.value, '${element[1].baseUrl}', ${element[1].queryFun})">
                     </input>
                     `;
                 }
@@ -278,7 +279,7 @@
                         cursor = { ...pos, idx: 1 };
 
                     html += `<a class="cell span2" id="c${pos.col}r${pos.row}i1" href="${element.url}"
-                    onfocus="on_cell_focused({row: ${pos.row},col: ${pos.col},idx: 1})">
+                    onfocus="on_cell_focused({row: ${pos.row}, col: ${pos.col}, idx: 1})">
                     ${element.name}
                     </a>
                     `;
@@ -343,7 +344,7 @@
                 return (typeof event.which === "number") ? event.which : event.keyCode;
             }
 
-            var on_key_pressed = function(event)
+            var on_key_down = function(event)
             {
                 switch(get_key_code(event))
                 {
@@ -358,26 +359,31 @@
                         break;
 
                     case 37: // left
-                        if (cursor.idx == 2)
-                        focus_cell( { ...cursor, idx: 1 } );
-                        else
-                            if ((cursor.col>1) && (!event.target.selectionStart || (event.target.selectionStart<1)))
-                            {
-                                var new_row = Math.min(cursor.row, dimensions[cursor.col-2]);
-                                var has_input_box = get_cell({ ...cursor, col: cursor.col-1, idx: 2 });
-                                focus_cell( { row: new_row, col: cursor.col-1, idx: has_input_box ? 2 : 1 });
-                            }
+                        if ((event.target.selectionStart == undefined || (event.target.selectionStart<1)))
+                        {
+                            event.preventDefault();
+                            if (cursor.idx == 2)
+                                focus_cell( { ...cursor, idx: 1 } );
+                            else
+                                if (cursor.col>1)
+                                {
+                                    var new_row = Math.min(cursor.row, dimensions[cursor.col-2]);
+                                    var has_input_box = get_cell({ ...cursor, col: cursor.col-1, idx: 2 });
+                                    focus_cell( { row: new_row, col: cursor.col-1, idx: has_input_box ? 2 : 1 });
+                                }
+                        }
                         break;
 
                     case 39: // right
-                        if ((cursor.idx == 1) && (get_cell({ ...cursor, idx: 2 })))
-                            focus_cell({ ...cursor, idx: 2 });
-                        else
-                            if (cursor.col<dimensions.length)
-                            {
-                                event.preventDefault();
-                                focus_cell({ row: Math.min(cursor.row, dimensions[cursor.col]), col: cursor.col+1, idx: 1});
-                            }
+                        if ((event.target.selectionStart == undefined || (event.target.selectionStart>=event.target.value.length)))
+                        {
+                            event.preventDefault();
+                            if ((cursor.idx == 1) && (get_cell({ ...cursor, idx: 2 })))
+                                focus_cell({ ...cursor, idx: 2 });
+                            else
+                                if (cursor.col<dimensions.length)
+                                    focus_cell({ row: Math.min(cursor.row, dimensions[cursor.col]), col: cursor.col+1, idx: 1});
+                        }
                         break;
 
                     case 27: // escape
@@ -397,6 +403,12 @@
                 }
             };
 
+            var on_key_up = function(event, value, baseUrl, queryFun)
+            {
+                if (get_key_code(event) == 13) // enter
+                    window.location.href = baseUrl + queryFun(value);
+            };
+
             var go = function()
             {
                 let html = build_html(startpage_contents);
@@ -405,7 +417,7 @@
 
                 focus_cell(cursor);
 
-                document.body.onkeydown = on_key_pressed;
+                document.body.onkeydown = on_key_down;
             }
 
            </script>
