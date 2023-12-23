@@ -262,13 +262,13 @@
                             cursor = { ...pos, idx: i+1 };
 
                     html += `<a class="cell" id="c${pos.col}r${pos.row}i1" href="${element[0].url}"
-                    onfocus="on_cell_focused({'row': ${pos.row},'col': ${pos.col},'idx': 1})">
+                    onfocus="on_cell_focused({row: ${pos.row},col: ${pos.col},idx: 1})">
                     ${element[0].name}
                     </a>
                     `;
 
                     html += `<input class="cell" id="c${pos.col}r${pos.row}i2"
-                    onfocus="on_cell_focused({'row': ${pos.row},'col': ${pos.col},'idx': 2})">
+                    onfocus="on_cell_focused({row: ${pos.row},col: ${pos.col},idx: 2})">
                     </input>
                     `;
                 }
@@ -349,34 +349,34 @@
                 {
                     case 38: // up
                         if (cursor.row>1)
-                            focus_cell( { "row": cursor.row-1, "col": cursor.col, "idx": cursor.idx } );
+                        focus_cell( { ...cursor, row: cursor.row-1 } );
                         break;
 
                     case 40: // down
                         if (cursor.row<dimensions[cursor.col-1])
-                            focus_cell( { "row": cursor.row+1, "col": cursor.col, "idx": cursor.idx } );
+                        focus_cell( { ...cursor, row: cursor.row+1 } );
                         break;
 
                     case 37: // left
                         if (cursor.idx == 2)
-                            focus_cell( { "row": cursor.row, "col": cursor.col, "idx": 1 });
+                        focus_cell( { ...cursor, idx: 1 } );
                         else
                             if ((cursor.col>1) && (!event.target.selectionStart || (event.target.selectionStart<1)))
                             {
                                 var new_row = Math.min(cursor.row, dimensions[cursor.col-2]);
-                                var has_input_box = get_cell({ "row": cursor.row, "col": cursor.col-1, "idx": 2 });
-                                focus_cell( { "row": new_row, "col": cursor.col-1, "idx": has_input_box ? 2 : 1 });
+                                var has_input_box = get_cell({ ...cursor, col: cursor.col-1, idx: 2 });
+                                focus_cell( { row: new_row, col: cursor.col-1, idx: has_input_box ? 2 : 1 });
                             }
                         break;
 
                     case 39: // right
-                        if ((cursor.idx == 1) && (get_cell({ "row": cursor.row, "col": cursor.col, "idx": 2 })))
-                            focus_cell({ "row": cursor.row, "col": cursor.col, "idx": 2 });
+                        if ((cursor.idx == 1) && (get_cell({ ...cursor, idx: 2 })))
+                            focus_cell({ ...cursor, idx: 2 });
                         else
                             if (cursor.col<dimensions.length)
                             {
                                 event.preventDefault();
-                                focus_cell({ "row": Math.min(cursor.row, dimensions[cursor.col]), "col": cursor.col+1, "idx": 1});
+                                focus_cell({ row: Math.min(cursor.row, dimensions[cursor.col]), col: cursor.col+1, idx: 1});
                             }
                         break;
 
