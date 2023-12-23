@@ -278,7 +278,7 @@
                         cursor = { ...pos, idx: 1 };
 
                     html += `<a class="cell span2" id="c${pos.col}r${pos.row}i1" href="${element.url}"
-                    onfocus="on_cell_focused({'row': ${pos.row},'col': ${pos.col},'idx': 1})">
+                    onfocus="on_cell_focused({row: ${pos.row},col: ${pos.col},idx: 1})">
                     ${element.name}
                     </a>
                     `;
