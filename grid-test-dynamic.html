@@ -7,7 +7,7 @@
             body, input
             {
                 font-family: sans-serif;
-                font-size: 1.5vmax;
+                font-size: 1.2vmax;
             }
 
             input
@@ -22,11 +22,6 @@
                 text-decoration: none;
             }
 
-            .fb-space-around
-            {
-                justify-content: space-around;
-            }
-            
             .fb-row
             {
                 display: flex;
@@ -221,6 +216,7 @@
                         ]
                     }
                 ],
+
             ];
 
             var cursor = null;
@@ -231,24 +227,28 @@
                 return `c${pos.col}r${pos.row}i${pos.idx}`;
             };
 
+            var get_cell = function(pos)
+            {
+                return document.getElementById(get_id(pos));
+            };
+
             var focus_cell = function(pos)
             {
                 if (!pos)
                     return;
 
-                console.log(`focus_cell(), pos: ${JSON.stringify(pos)}`);
+                var cell = get_cell(pos);
 
-                var element = document.getElementById(get_id(pos));
-
-                if (element)
-                {
-                    element.focus();
-                    cursor = pos;
-                    console.log(`focus_cell(), cursor: ${JSON.stringify(cursor)}`);
-                }
+                if (cell)
+                    cell.focus();
                 // else
                 //     console.log(`ERROR: could not find element with id == ${get_id(pos)}`);
 
+            };
+
+            var on_cell_focused = function(pos)
+            {
+                cursor = pos;
             };
 
             var build_element = function(element, pos)
@@ -261,21 +261,24 @@
                         if (element[i].default)
                             cursor = { ...pos, idx: i+1 };
 
-                    html += `<a class="cell" id="c${pos.col}r${pos.row}i1" href="${element[0].url}">
+                    html += `<a class="cell" id="c${pos.col}r${pos.row}i1" href="${element[0].url}"
+                    onfocus="on_cell_focused({'row': ${pos.row},'col': ${pos.col},'idx': 1})">
                     ${element[0].name}
                     </a>
                     `;
 
-                    html += `<input class="cell" id="c${pos.col}r${pos.row}i2">
-                        </input>
-                        `;
+                    html += `<input class="cell" id="c${pos.col}r${pos.row}i2"
+                    onfocus="on_cell_focused({'row': ${pos.row},'col': ${pos.col},'idx': 2})">
+                    </input>
+                    `;
                 }
                 else
                 {
                     if (element.default)
                         cursor = { ...pos, idx: 1 };
 
-                    html += `<a class="cell span2" id="c${pos.col}r${pos.row}i1" href="${element.url}">
+                    html += `<a class="cell span2" id="c${pos.col}r${pos.row}i1" href="${element.url}"
+                    onfocus="on_cell_focused({'row': ${pos.row},'col': ${pos.col},'idx': 1})">
                     ${element.name}
                     </a>
                     `;
@@ -327,7 +330,7 @@
                     pos.row = 1;
                 });
 
-                let html = `<div class="fb-row fb-space-around">
+                let html = `<div class="fb-row">
                     ${columns_html}
                     </div>
                     `;
@@ -340,52 +343,58 @@
                 return (typeof event.which === "number") ? event.which : event.keyCode;
             }
 
-            var on_key_down = function(event)
+            var on_key_pressed = function(event)
             {
-                // if (!cursor)
-                //     focus_cell(0,0);
-                // else
-                    switch(get_key_code(event))
-                    {
-                        case 38: // up
-                            console.log("up");
-                            if (cursor.row>0)
-                                focus_cell( { "row": cursor.row-1, "col": cursor.col, "idx": cursor.idx } );
-                            break;
+                switch(get_key_code(event))
+                {
+                    case 38: // up
+                        if (cursor.row>1)
+                            focus_cell( { "row": cursor.row-1, "col": cursor.col, "idx": cursor.idx } );
+                        break;
 
-                        case 40: // down
-                            if (cursor.row<dimensions[cursor.col-1])
-                                focus_cell( { "row": cursor.row+1, "col": cursor.col, "idx": cursor.idx } );
-                            break;
+                    case 40: // down
+                        if (cursor.row<dimensions[cursor.col-1])
+                            focus_cell( { "row": cursor.row+1, "col": cursor.col, "idx": cursor.idx } );
+                        break;
 
-                        case 37: // left
+                    case 37: // left
+                        if (cursor.idx == 2)
+                            focus_cell( { "row": cursor.row, "col": cursor.col, "idx": 1 });
+                        else
                             if ((cursor.col>1) && (!event.target.selectionStart || (event.target.selectionStart<1)))
-                                focus_cell( { "row": Math.min(cursor.row, dimensions[cursor.col-1]-1), "col": cursor.col-1, "idx": cursor.idx });
-                            break;
+                            {
+                                var new_row = Math.min(cursor.row, dimensions[cursor.col-2]);
+                                var has_input_box = get_cell({ "row": cursor.row, "col": cursor.col-1, "idx": 2 });
+                                focus_cell( { "row": new_row, "col": cursor.col-1, "idx": has_input_box ? 2 : 1 });
+                            }
+                        break;
 
-                        case 39: // right
+                    case 39: // right
+                        if ((cursor.idx == 1) && (get_cell({ "row": cursor.row, "col": cursor.col, "idx": 2 })))
+                            focus_cell({ "row": cursor.row, "col": cursor.col, "idx": 2 });
+                        else
                             if (cursor.col<dimensions.length)
                             {
                                 event.preventDefault();
-                                focus_cell(Math.min(cursor.row, dimensions[cursor.col+1].length-1), cursor.col+1);
+                                focus_cell({ "row": Math.min(cursor.row, dimensions[cursor.col]), "col": cursor.col+1, "idx": 1});
                             }
-                            break;
+                        break;
 
-                        case 27: // escape
-                            if (cursor.idx == 2)
+                    case 27: // escape
+                        if (cursor.idx == 2)
+                        {
+                            var elem = document.getElementById(get_id(cursor));
+                            if (elem)
                             {
-                                var elem = document.getElementById(get_id(cursor));
-                                if (elem)
-                                {
-                                    elem.blur();
-                                    setTimeout(function(){ elem.value = ''; elem.focus(); }, 0);
-                                }
+                                elem.blur();
+                                setTimeout(function(){ elem.value = ''; elem.focus(); }, 0);
                             }
-                            break;
+                        }
+                        break;
 
-                        default:
-                            break;
-                    }
+                    default:
+                        break;
+                }
             };
 
             var go = function()
@@ -396,10 +405,7 @@
 
                 focus_cell(cursor);
 
-                document.body.onkeydown = on_key_down;
-
-                console.log(`cursor: ${JSON.stringify(cursor)}`);
-                console.log(`dimensions: ${JSON.stringify(dimensions)}`);
+                document.body.onkeydown = on_key_pressed;
             }
 
            </script>
