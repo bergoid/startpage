@@ -1,7 +1,3 @@
-
-        i color contrast checker:
-            https://colourcontrast.cc
-
         . use CSS (color) variables
             i https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties
             . Possible?
@@ -21,6 +17,15 @@
 
         . search suggestions
             . CORS?
+
+        i color contrast checker:
+            https://colourcontrast.cc
+
+        v input hover background color
+            --> between normal and focused
+
+        v input focused text color
+            --> lighter than default text color
 
         v when hovering over focused button, use :hover colors instead of :focus colors
 
