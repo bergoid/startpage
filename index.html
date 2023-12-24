@@ -3,40 +3,148 @@
     <head>
         <meta charset="utf-8">
 
-        <!--
+        <style type="text/css">
+            body, input
+            {
+                font-family: sans-serif;
+                font-size: 1.2vmax;
+            }
 
+            input
+            {
+/*                font-size: 1em;*/
+                border: none;
+                outline: none;
+            }
 
-        TODO:
-        -----
+            a
+            {
+                text-decoration: none;
+            }
 
-        . Put tables under eachother if not enough room
+            .fb-row
+            {
+                display: flex;
+                flex-flow: row wrap;
+            }
+            
+            .fb-column
+            {
+                display: flex;
+                flex-flow: column wrap;
+            }
 
-        v arbitrary number of tables
-            x ability to group tables:
-            x one group next to eachother if viewport
-                allows it, under eachother on smaller displays.
-            x different groups are always under eachother, no matter
-                how much room.
+            .set
+            {
+                display: grid;
+                grid-template-columns: 2fr 3fr;
+                gap: .1em;
+                margin: 1em;
+                padding: .1em;
+            }
 
+            .header
+            {
+                grid-row: 1;
+            }
 
-        x collapsible lists of links
+            .span2
+            {
+                grid-column: 1 / span 2;
+            }
 
-        v inputCell focus:
-            x separate div whose size & pos matches focused cell?
-            x leads to trouble getting focus into input box with touch devices?
-            v instead of border, use lightblue BG, both for inputCell as input box
-                ; this is consistent with the focus appearance of other cells
-                ; will look the same on both Chrome & FF (?)
+            .cell
+            {
+                border-radius: .15em;
+            }
 
+            .cell:focus
+            {
+                outline: none;
+            }
 
-        -->
+            .header, .cell
+            {
+                padding-left: 1em;
+                padding-right: 1em;
+                padding-top: .2em;
+                padding-bottom: .2em;
+            }
+
+            @media (prefers-color-scheme: light)
+            {
+                body
+                {
+                    background-color: #e8e8e8;
+                }
+
+                .cell
+                {
+                    background-color: #f0f0f0;
+                }
+
+                a
+                {
+                    color: #800000;
+                }
+
+                a:hover
+                {
+                    color: #ffffff;
+                    background-color: #800000;
+                }
+
+                input
+                {
+                    caret-color: #000000;
+                }
+            }
+
+            @media (prefers-color-scheme: dark)
+            {
+                body
+                {
+                    background-color: #242424;
+                    color: #a0a0a0;
+                }
+
+                .cell
+                {
+                    background-color: #303030;
+                }
+
+                .cell:focus
+                {
+                    background-color: #404040;
+                }
+
+                a
+                {
+                    color: #f06292;
+                }
+
+                a:hover
+                {
+                    color: #303030;
+                    background-color: #f06292;
+                }
+
+                input
+                {
+                    color: #a0a0a0;
+                    caret-color: #a0a0a0;
+                }
+
+            }
+
+        </style>
 
         <script type="text/javascript">
             //
             // URL-encode argument string
             // Adhere to http://tools.ietf.org/html/rfc3986
             // See: https://developer.mozilla.org/nl/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
-            encodeUrl = function(str)
+            var encodeUrl = function(str)
             {
                 return encodeURIComponent(str).replace
                 (
@@ -58,618 +166,264 @@
                     .join("+");
             };
 
-            //////////////////////////////////////////////////////////////////////////////////////////////////
-            // Configuration part
-            //
-            // Edit this data structure to change the content of the page.
-            // The properties 'baseUrl' and 'queryFun' construct a URL as follows:
-            //     If 'value' is the string entered in the search box, then : URL = baseUrl + queryFun(value)
-            
-            var spdata = {
-
-                sites :
+            var startpage_contents = [
+                /* Column 1 */
                 [
-                    [
-                        { url:"http://www.example.com/", name:"Example" },
-                        { url:"https://proton.me", name:"Proton Mail" }
-                    ],
-                    
-                    [
-                        { url:"https://lit.dev/", name:"Lit" },
-                        { url:"https://svelte.dev/", name:"Svelte" },
-                        { url:"https://alpinejs.dev/", name:"Alpine.js" },
-                        { url:"https://htmx.org/", name:"htmx" }
-                    ],
-
-                    [
-                        { url:"https://flems.io/", name:"flems.io" },
-                        { url:"https://replit.com/", name:"Replit" },
-                        { url:"https://www.typescriptlang.org/play/", name:"TS Playground" },
-                        { url:"https://rentry.co/", name:"rentry.co" },
-                        
-                        { url:"https://regex101.com/", name:"Regex 101" },
-                        { url:"https://jwt.io/", name:"JWT.io" },
-                    ]
+                    {
+                        "header": "Misc",
+                        "contents":
+                        [
+                            { url:"http://www.example.com/", name:"Example" },
+                            { url:"https://proton.me", name:"Proton Mail" }
+                        ]
+                    }
                 ],
 
-                search :
+                /* Column 2 */
                 [
-                    [ { url:"https://search.brave.com", name:"Brave Search" }, { baseUrl: "https://search.brave.com/search?q=", queryFun: encodeQuery } ],
-                    [ { url:"https://search.brave.com/", name:"Brave Images" }, { baseUrl: "https://search.brave.com/images?q=", queryFun: encodeQuery } ],
-                    [ { url:"https://www.openstreetmap.org/", name:"OpenStreetMap" }, { baseUrl: "https://www.openstreetmap.org/search?query=", queryFun: encodeQuery } ],
-                    [ { url:"https://en.wikipedia.org", name:"Wikipedia" }, { baseUrl: "https://en.wikipedia.org/wiki/Special:Search?search=", queryFun: encodeQuery } ]
-                ]
+                    {
+                        "header": "Frontend frameworks",
+                        "contents":
+                        [
+                            { url:"https://lit.dev/", name:"Lit" },
+                            { url:"https://svelte.dev/", name:"Svelte" },
+                            { url:"https://alpinejs.dev/", name:"Alpine.js" },
+                            { url:"https://htmx.org/", name:"htmx" }
+                        ]
+                    },
+                    {
+                        "header": "Online tools",
+                        "contents":
+                        [
+                            { url:"https://flems.io/", name:"flems.io" },
+                            { url:"https://replit.com/", name:"Replit" },
+                            { url:"https://www.typescriptlang.org/play/", name:"TS Playground" },
+                            { url:"https://rentry.co/", name:"rentry.co" }
+                        ]
+                    }
+                ],
+
+                /* Column 3 */
+                [
+                    {
+                        "header": "Search",
+                        "contents":
+                        [
+                            [ { url:"https://search.brave.com", name:"Brave Search" }, { baseUrl: "https://search.brave.com/search?q=", queryFun: "encodeQuery" } ],
+                            [ { url:"https://search.brave.com/", name:"Brave Images" }, { baseUrl: "https://search.brave.com/images?q=", queryFun: "encodeQuery" } ],
+                            [ { url:"https://www.openstreetmap.org/", name:"OpenStreetMap" }, { baseUrl: "https://www.openstreetmap.org/search?query=", queryFun: "encodeQuery", default: true } ],
+                            [ { url:"https://en.wikipedia.org", name:"Wikipedia" }, { baseUrl: "https://en.wikipedia.org/wiki/Special:Search?search=", queryFun: "encodeQuery" } ]
+                        ]
+                    }
+                ],
+
+            ];
+
+            var cursor = null;
+            var dimensions = [];
+
+            var get_id = function(pos)
+            {
+                return `c${pos.col}r${pos.row}i${pos.idx}`;
+            };
+
+            var get_cell = function(pos)
+            {
+                return document.getElementById(get_id(pos));
+            };
+
+            var focus_cell = function(pos)
+            {
+                if (!pos)
+                    return;
+
+                var cell = get_cell(pos);
+
+                if (cell)
+                    cell.focus();
+                // else
+                //     console.log(`ERROR: could not find element with id == ${get_id(pos)}`);
 
             };
 
-            // End of configuration part
-            //////////////////////////////////////////////////////////////////////////////////////////////////
-
-            spdata.all = spdata.sites.concat([spdata.search, spdata.search]);
-
-            var wi = {};
-
-            //
-            wi.forEach = function(array, loopFun, breakable)
+            var on_cell_focused = function(pos)
             {
-                var i=0, element;
-                if (breakable)
+                cursor = pos;
+            };
+
+            var build_element = function(element, pos)
+            {
+                let html = ``;
+
+                if (Array.isArray(element))
                 {
-                    while (element = array[i])
-                        if (loopFun(element,i++))
-                            return true;
+                    for (const i of [0, 1])
+                        if (element[i].default)
+                            cursor = { ...pos, idx: i+1 };
+
+                    html += `<a class="cell" id="c${pos.col}r${pos.row}i1" href="${element[0].url}"
+                    onfocus="on_cell_focused({row: ${pos.row}, col: ${pos.col}, idx: 1})">
+                    ${element[0].name}
+                    </a>
+                    `;
+
+                    html += `<input class="cell" id="c${pos.col}r${pos.row}i2"
+                    onfocus="on_cell_focused({row: ${pos.row}, col: ${pos.col}, idx: 2})"
+                    onkeyup="on_key_up(event, this.value, '${element[1].baseUrl}', ${element[1].queryFun})">
+                    </input>
+                    `;
                 }
                 else
-                    while (element = array[i])
-                        loopFun(element,i++);
+                {
+                    if (element.default)
+                        cursor = { ...pos, idx: 1 };
 
-                return false;
-            };
+                    html += `<a class="cell span2" id="c${pos.col}r${pos.row}i1" href="${element.url}"
+                    onfocus="on_cell_focused({row: ${pos.row}, col: ${pos.col}, idx: 1})">
+                    ${element.name}
+                    </a>
+                    `;
+                }
 
-            //
-            wi.isArray = ('isArray' in Array) ? Array.isArray : function (value) {
-                return Object.prototype.toString.call(value) === '[object Array]';
-            };
+                dimensions[pos.col-1] = pos.row;
+                pos.row++;
 
-
-            var ra = {};
-
-            //
-            if (String.prototype.trim)
-            {
-              ra.trim = function(s) {
-                  return s.trim();
-                };
-            }
-            else
-            {
-              ra.trim = function(s) {
-                  return s.replace(/^\s+|\s+$/g,"");
-                };
+                return html;
             }
 
-            //
-            ra.addName = function(s,name)
+            var build_set = function(set, pos)
             {
-              if (s.search(new RegExp("\\b" + name + "\\b", "g")) == -1)
-                return s + " " + name;
-              else
-                return s;
-            };
+                let html = `<div class="header span2">${set.header}</div>`;
 
-            //
-            ra.removeName = function(s,name)
+                if (set.contents)
+                    set.contents.forEach(element => {
+                        html += build_element(element, pos)
+                        });
+
+                return html;
+            }
+
+            var build_column = function(column, pos)
             {
-                return ra.trim(s.replace(new RegExp("\\b" + name + "\\b", "g"), "").replace(/\s{2,}/g, " "));
-            };
+                let html = ``;
 
-            //
-            ra.hasClass = function(e, className)
+                column.forEach(set => {
+                    html += `<div class="set">
+                        ${build_set(set, pos)}
+                        </div>
+                        `;
+                });
+
+                return html;
+            }
+
+            var build_html = function(data)
             {
-                if (e)
-                    return ra.hasName(e.className, className);
-            };
+                let columns_html = ``;
+                let pos = { col: 1, row: 1 };
 
-            //
-            ra.addClass = function(e, className)
-            {
-                if (e)
-                    e.className = ra.addName(e.className, className);
-            };
+                data.forEach(column => {
+                    columns_html += `<div class="fb-column">
+                        ${build_column(column, pos)}
+                        </div>
+                        `;
+                    pos.col++;
+                    pos.row = 1;
+                });
 
-            //
-            ra.removeClass = function(e, className)
-            {
-                if (e)
-                    e.className = ra.removeName(e.className, className);
-            };
+                let html = `<div class="fb-row">
+                    ${columns_html}
+                    </div>
+                    `;
 
-            //
-            ra.getKeyCode = function(event)
+                return html;
+            }
+
+            var get_key_code = function(event)
             {
                 return (typeof event.which === "number") ? event.which : event.keyCode;
             }
 
-            //
-            ra.el = function (id)
+            var on_key_down = function(event)
             {
-                return document.getElementById(id);
-            };
-
-            //
-            ra.body = function ()
-            {
-                return document.getElementsByTagName("body")[0];
-            };
-
-
-            //
-            ra.crel = function(type, arg2, arg3)
-            {
-                var theNode = undefined;
-                var key="";
-                var i=0;
-                var properties = undefined;
-                var children = undefined;
-
-                if (type)
+                switch(get_key_code(event))
                 {
-                    if (wi.isArray(arg3))
-                    {
-                        properties = arg2;
-                        children = arg3;
-                    }
-                    else
-                        if (wi.isArray(arg2))
-                            children = arg2;
-                        else
-                            properties = arg2;
+                    case 38: // up
+                        if (cursor.row>1)
+                        focus_cell( { ...cursor, row: cursor.row-1 } );
+                        break;
 
-                    theNode = document.createElement(type);
+                    case 40: // down
+                        if (cursor.row<dimensions[cursor.col-1])
+                        focus_cell( { ...cursor, row: cursor.row+1 } );
+                        break;
 
-                    if (theNode)
-                    {
-                        if (properties)
-                            for (key in properties)
-                                theNode[key] = properties[key];
-
-                        if (children)
-                            if (typeof children[0] === "string")
-                                theNode.appendChild(ra.crel(children[0], children[1], children[2]));
+                    case 37: // left
+                        if ((event.target.selectionStart == undefined || (event.target.selectionStart<1)))
+                        {
+                            event.preventDefault();
+                            if (cursor.idx == 2)
+                                focus_cell( { ...cursor, idx: 1 } );
                             else
-                                wi.forEach(
-                                    children,
-                                    function(elem){
-                                        if (wi.isArray(elem))
-                                            theNode.appendChild(ra.crel(elem[0], elem[1], elem[2]));
-                                        else
-                                            theNode.appendChild(elem);
-                                        }
-                                    );
-                    }
-                }
-
-                return theNode;
-            }
-
-
-            var app = function create_app()
-            {
-                var currentFocus = undefined;
-
-                ////////////////////////
-                // Helper functions
-                ////////////////////////
-                //
-                var getId = function(row, column)
-                {
-                    return "r" + row + "c" + column;
-                };
-
-                //
-                var focusCell = function(row, column)
-                {
-                    var element = ra.el(getId(row, column));
-
-                    if (element)
-                    {
-                        if (column==spdata.all.length-1)
-                            element = element.firstChild;
-                        element.focus();
-                        return true;
-                    }
-
-                    return false;
-                };
-
-                ////////////////////////
-                // Event handlers
-                ////////////////////////
-                //
-                var onFocus = function(row, column)
-                {
-                    currentFocus = { row: row, column: column };
-                };
-
-                //
-                var onBlur = function()
-                {
-                    currentFocus = undefined;
-                };
-
-                //
-                var onFocusInput = function(event, rowIndex)
-                {
-                    var elem = ra.el(getId(rowIndex,spdata.all.length-1));
-                    ra.removeClass(elem, "blurredCell");
-                    ra.addClass(elem, "focusedCell");
-                    ra.removeClass(elem.firstChild, "blurredCell");
-                    ra.addClass(elem.firstChild, "focusedCell");
-                    onFocus(rowIndex, spdata.all.length-1);
-                };
-
-                //
-                var onBlurInput = function(event, rowIndex)
-                {
-                    var elem = ra.el(getId(rowIndex,spdata.all.length-1));
-                    ra.removeClass(elem, "focusedCell");
-                    ra.addClass(elem, "blurredCell");
-                    ra.removeClass(elem.firstChild, "focusedCell");
-                    ra.addClass(elem.firstChild, "blurredCell");
-                    onBlur();
-                };
-
-                //
-                var onFocusLink = function(event, rowIndex, colIndex)
-                {
-                    onFocus(rowIndex, colIndex);
-                };
-
-                //
-                var onBlurLink = function(event, rowIndex, colIndex)
-                {
-                    onBlur();
-                };
-
-                //
-                var onKeyDown = function(event)
-                {
-                    if (!currentFocus)
-                        focusCell(0,0);
-                    else
-                        switch(ra.getKeyCode(event))
-                        {
-                            case 38: // up
-                                if (currentFocus.row>0)
-                                    focusCell(currentFocus.row-1, currentFocus.column);
-                                break;
-
-                            case 40: // down
-                                if (currentFocus.row<spdata.all[currentFocus.column].length-1)
-                                    focusCell(currentFocus.row+1, currentFocus.column);
-                                break;
-
-                            case 37: // left
-                                if ((currentFocus.column>0) && (!event.target.selectionStart || (event.target.selectionStart<1)))
-                                    focusCell(Math.min(currentFocus.row, spdata.all[currentFocus.column-1].length-1), currentFocus.column-1);
-                                break;
-
-                            case 39: // right
-                                if (currentFocus.column<spdata.all.length-1)
+                                if (cursor.col>1)
                                 {
-                                    event.preventDefault();
-                                    focusCell(Math.min(currentFocus.row, spdata.all[currentFocus.column+1].length-1), currentFocus.column+1);
+                                    var new_row = Math.min(cursor.row, dimensions[cursor.col-2]);
+                                    var has_input_box = get_cell({ ...cursor, col: cursor.col-1, idx: 2 });
+                                    focus_cell( { row: new_row, col: cursor.col-1, idx: has_input_box ? 2 : 1 });
                                 }
-                                break;
-
-                            case 27: // escape
-                                if (currentFocus.column==spdata.all.length-1)
-                                {
-                                    var elem = ra.el(getId(currentFocus.row, currentFocus.column));
-                                    if (elem)
-                                    {
-                                        elem.blur();
-                                        setTimeout(function(){ elem.firstChild.value = ''; elem.focus(); }, 0);
-                                    }
-                                }
-                                break;
-
-                            default:
-                                break;
                         }
-                };
+                        break;
 
-                //
-                var onInputKeyUp = function(event, dataElem, value)
-                {
-                    if (ra.getKeyCode(event)==13)
-                    {
-                        window.location.href=dataElem.baseUrl + dataElem.queryFun(value);
-                    }
-                };
-
-                ////////////////////////
-                // DOM functions
-                ////////////////////////
-                //
-                var cellDOM = function(dataElem, rowIndex, colIndex, linkCellColor)
-                {
-                    if ('url' in dataElem)
-                    {
-                        return ra.crel
-                        (
-                            "a",
-                            {
-                                id: getId(rowIndex, colIndex),
-                                className: "pageCell blurredCell linkCell " + linkCellColor,
-                                href: dataElem.url,
-                                innerHTML: dataElem.name,
-                                onfocus: function(event) { onFocusLink(event, rowIndex, colIndex); },
-                                onblur: function(event) { onBlurLink(event, rowIndex, colIndex); }
-                            }
-                        )
-                    }
-                    else
-                    {
-                        return ra.crel
-                        (
-                            "div",
-                            {
-                                id: getId(rowIndex, colIndex),
-                                className: "pageCell blurredCell inputCell"
-                            },
-                            [
-                                ra.crel
-                                (
-                                    "input",
-                                    {
-                                        type: "text",
-                                        className: "spInput",
-                                        onkeyup: function(event) { onInputKeyUp(event, dataElem, this.value); },
-                                        onfocus: function(event) { onFocusInput(event, rowIndex); },
-                                        onblur: function(event) { onBlurInput(event, rowIndex); }
-                                    }
-                                )
-                            ]
-                        )
-                    }
-                };
-
-                //
-                var pageDOM = function()
-                {
-                    return ra.crel
-                    (
-                        "div",
+                    case 39: // right
+                        if ((event.target.selectionStart == undefined || (event.target.selectionStart>=event.target.value.length)))
                         {
-                            className: "layoutTable"
-                        },
-                        [
-                            ra.crel
-                            (
-                                "div",
-                                {
-                                    className: "layoutRow"
-                                },
-                                spdata.sites.map
-                                (
-                                    function(sitesColumn, columnIndex)
-                                    {
-                                        return ra.crel
-                                        (
-                                            "div",
-                                            {
-                                                className: "layoutCell"
-                                            },
-                                            [
-                                                ra.crel
-                                                (
-                                                    "div",
-                                                    {
-                                                        className: "pageTable"
-                                                    },
-                                                    sitesColumn.map
-                                                    (
-                                                        function(dataElem, rowIndex)
-                                                        {
-                                                            return ra.crel
-                                                            (
-                                                                "div",
-                                                                {
-                                                                    className: "pageRow"
-                                                                },
-                                                                [
-                                                                    cellDOM(dataElem, rowIndex, columnIndex, "linkCellRed")
-                                                                ]
-                                                            );
-                                                        }
-                                                    )
-                                                )
-                                            ]
-                                        );
-                                    }
-                                ).concat
-                                (
-                                    [
-                                        ra.crel
-                                        (
-                                            "div",
-                                            {
-                                                className: "layoutCell"
-                                            },
-                                            [
-                                                ra.crel
-                                                (
-                                                    "div",
-                                                    {
-                                                        className: "pageTable"
-                                                    },
-                                                    spdata.search.map
-                                                    (
-                                                        function(dataRow, rowIndex)
-                                                        {
-                                                            return ra.crel
-                                                            (
-                                                                "div",
-                                                                {
-                                                                    className: "pageRow"
-                                                                },
-                                                                dataRow.map
-                                                                (
-                                                                    function(dataElem, colIndex)
-                                                                    {
-                                                                        return cellDOM(dataElem, rowIndex, spdata.sites.length+colIndex, "linkCellBlue");
-                                                                    }
-                                                                )
-                                                            );
-                                                        }
-                                                    )
-                                                )
-                                            ]
-                                        )
-                                    ]
-                                )
-                            )
-                        ]
-                    );
-                };
+                            event.preventDefault();
+                            if ((cursor.idx == 1) && (get_cell({ ...cursor, idx: 2 })))
+                                focus_cell({ ...cursor, idx: 2 });
+                            else
+                                if (cursor.col<dimensions.length)
+                                    focus_cell({ row: Math.min(cursor.row, dimensions[cursor.col]), col: cursor.col+1, idx: 1});
+                        }
+                        break;
 
-                //
-                var go = function()
-                {
-                    ra.body().appendChild(pageDOM());
-                    ra.body().onkeydown = onKeyDown;
-                    focusCell(0, spdata.all.length-2);
-                };
+                    case 27: // escape
+                        if (cursor.idx == 2)
+                        {
+                            var elem = document.getElementById(get_id(cursor));
+                            if (elem)
+                            {
+                                elem.blur();
+                                setTimeout(function(){ elem.value = ''; elem.focus(); }, 0);
+                            }
+                        }
+                        break;
 
-                //////////////////////////////
-                // Public interface
-                return {
-                    go: go
-                };
-            }(); // app
-        </script>
-        <style type="text/css">
-            body
+                    default:
+                        break;
+                }
+            };
+
+            var on_key_up = function(event, value, baseUrl, queryFun)
             {
-                font-family: sans-serif;
-                font-size: 1.5vmax;
+                if (get_key_code(event) == 13) // enter
+                    window.location.href = baseUrl + queryFun(value);
+            };
+
+            var go = function()
+            {
+                let html = build_html(startpage_contents);
+
+                document.body.insertAdjacentHTML("beforeend", html);
+
+                focus_cell(cursor);
+
+                document.body.onkeydown = on_key_down;
             }
 
+           </script>
 
-            .layoutTable
-            {
-                display: table;
-                margin: auto;
-            }
-
-            .layoutRow
-            {
-                display: table-row;
-            }
-
-            .layoutCell
-            {
-                display: table-cell;
-            }
-
-            .pageTable
-            {
-                display: table;
-                margin-top: 3em;
-                margin-left: 1em;
-                margin-right: 1em;
-                /*
-                border-top: 2px solid #f8f8f8;
-                border-left: 2px solid #f8f8f8;
-                */
-                border-collapse: collapse;
-                min-width: 300px;
-            }
-
-            .pageRow
-            {
-                display: table-row;
-            }
-
-            .pageCell
-            {
-                display: table-cell;
-                border-top: none;
-                border-left: none;
-                /*
-                border-right: 2px solid #f8f8f8;
-                border-bottom: 2px solid #f8f8f8;
-                border: 2px solid #f8f8f8;
-                */
-
-                border-width: 2px;
-                border-style: solid;
-                border-color: #f8f8f8;
-                outline: none;
-            }
-
-            .pageCell:focus
-            {
-                background-color: #e0e0ff;
-            }
-
-            .linkCell
-            {
-                text-decoration: none;
-                padding: .5em;
-            }
-
-            .linkCell:hover
-            {
-                color: #ffffff;
-            }
-
-            .linkCellRed
-            {
-                color: #800000;
-            }
-
-            .linkCellRed:hover
-            {
-                background-color: #800000;
-            }
-
-            .linkCellBlue
-            {
-                color: #000080;
-            }
-
-            .linkCellBlue:hover
-            {
-                background-color: #000080;
-            }
-
-            .inputCell
-            {
-                padding: .2em;
-            }
-
-            .spInput
-            {
-                display: table-cell;
-                font-family: sans-serif;
-                font-size: 1em;
-                border: none;
-                outline: none;
-                width: 100%;
-            }
-            .focusedCell
-            {
-                background-color: #e0e0ff;
-            }
-
-            .blurredCell
-            {
-                background-color: #ffffff;
-            }
-        </style>
-        <title>Startpage</title>
     </head>
-    <body onload="app.go()"></body>
+
+    <body onload="go()">
+    </body>
 </html>
