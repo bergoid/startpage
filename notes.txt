@@ -1,11 +1,16 @@
+        . Put tables under each other if not enough room
+            --> happens already (somewhat) by default: flexbox row
+                gets "wrapped" to a new row, if too long.
+            --> but use media query to detect portrait mode
+                and change the toplevel flexbox from row to column
 
-        . alignment of button / input pairs: CSS Grid
-        . cursor highlight & navigation
-
-        . media queries for light/dark theme
         . search suggestions
+            . CORS?
 
-        . Put tables under eachother if not enough room
+        v alignment of button / input pairs: CSS Grid
+        v cursor highlight & navigation
+
+        v media queries for light/dark theme
 
         v ESC to clear input field
         v use flexbox
