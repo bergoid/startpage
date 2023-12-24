@@ -221,9 +221,9 @@
                         "header": "Search",
                         "contents":
                         [
-                            [ { url:"https://search.brave.com", name:"Brave Search" }, { baseUrl: "https://search.brave.com/search?q=", queryFun: "encodeQuery" } ],
+                            [ { url:"https://search.brave.com", name:"Brave Search" }, { baseUrl: "https://search.brave.com/search?q=", queryFun: "encodeQuery", default: true } ],
                             [ { url:"https://search.brave.com/", name:"Brave Images" }, { baseUrl: "https://search.brave.com/images?q=", queryFun: "encodeQuery" } ],
-                            [ { url:"https://www.openstreetmap.org/", name:"OpenStreetMap" }, { baseUrl: "https://www.openstreetmap.org/search?query=", queryFun: "encodeQuery", default: true } ],
+                            [ { url:"https://www.openstreetmap.org/", name:"OpenStreetMap" }, { baseUrl: "https://www.openstreetmap.org/search?query=", queryFun: "encodeQuery" } ],
                             [ { url:"https://en.wikipedia.org", name:"Wikipedia" }, { baseUrl: "https://en.wikipedia.org/wiki/Special:Search?search=", queryFun: "encodeQuery" } ]
                         ]
                     }
@@ -362,12 +362,12 @@
                 {
                     case 38: // up
                         if (cursor.row>1)
-                        focus_cell( { ...cursor, row: cursor.row-1 } );
+                            cursor = { ...cursor, row: cursor.row-1 };
                         break;
 
                     case 40: // down
                         if (cursor.row<dimensions[cursor.col-1])
-                        focus_cell( { ...cursor, row: cursor.row+1 } );
+                            cursor = { ...cursor, row: cursor.row+1 };
                         break;
 
                     case 37: // left
@@ -375,13 +375,13 @@
                         {
                             event.preventDefault();
                             if (cursor.idx == 2)
-                                focus_cell( { ...cursor, idx: 1 } );
+                                cursor = { ...cursor, idx: 1 };
                             else
                                 if (cursor.col>1)
                                 {
                                     var new_row = Math.min(cursor.row, dimensions[cursor.col-2]);
                                     var has_input_box = get_cell({ ...cursor, col: cursor.col-1, idx: 2 });
-                                    focus_cell( { row: new_row, col: cursor.col-1, idx: has_input_box ? 2 : 1 });
+                                        cursor = { row: new_row, col: cursor.col-1, idx: has_input_box ? 2 : 1 };
                                 }
                         }
                         break;
@@ -391,10 +391,10 @@
                         {
                             event.preventDefault();
                             if ((cursor.idx == 1) && (get_cell({ ...cursor, idx: 2 })))
-                                focus_cell({ ...cursor, idx: 2 });
+                                cursor = { ...cursor, idx: 2 };
                             else
                                 if (cursor.col<dimensions.length)
-                                    focus_cell({ row: Math.min(cursor.row, dimensions[cursor.col]), col: cursor.col+1, idx: 1});
+                                    cursor = { row: Math.min(cursor.row, dimensions[cursor.col]), col: cursor.col+1, idx: 1};
                         }
                         break;
 
@@ -404,8 +404,9 @@
                             var elem = document.getElementById(get_id(cursor));
                             if (elem)
                             {
-                                elem.blur();
-                                setTimeout(function(){ elem.value = ''; elem.focus(); }, 0);
+                                elem.value = '';
+                                // elem.blur();
+                                // setTimeout(function(){ elem.value = ''; elem.focus(); }, 0);
                             }
                         }
                         break;
@@ -413,6 +414,8 @@
                     default:
                         break;
                 }
+
+                focus_cell(cursor);
             };
 
             var on_key_up = function(event, value, baseUrl, queryFun)
