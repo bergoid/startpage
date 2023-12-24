@@ -1,9 +1,11 @@
+
         i color contrast checker:
             https://colourcontrast.cc
-            
+
         . use CSS (color) variables
             i https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties
             . Possible?
+            . assign variables in media color scheme blocks, use them outside media blocks?
 
         . Better responsive font size
             i https://css-tricks.com/viewport-sized-typography/
@@ -19,6 +21,8 @@
 
         . search suggestions
             . CORS?
+
+        v when hovering over focused button, use :hover colors instead of :focus colors
 
         v alignment of button / input pairs: CSS Grid
         v cursor highlight & navigation
