@@ -4,11 +4,12 @@
         <meta charset="utf-8">
 
         <style type="text/css">
-            /* non color related styles */
+            /* Non color related styles */
             body, input
             {
                 font-family: sans-serif;
                 font-size: 1.2vmax;
+/*                font-size: calc(0.75em + 1vmin);*/
             }
 
             input
@@ -23,16 +24,34 @@
                 text-decoration: none;
             }
 
-            .fb-row
+            .toplevel
             {
                 display: flex;
-                flex-flow: row wrap;
+                flex-wrap: wrap;
+            }
+
+            @media (orientation: landscape)
+            {
+                .toplevel
+                {
+                    flex-direction: row;
+                }
             }
             
-            .fb-column
+            @media (orientation: portrait)
+            {
+                .toplevel
+                {
+                    flex-direction: column;
+                }
+            }
+
+            .column
             {
                 display: flex;
-                flex-flow: column wrap;
+                flex-direction: column;
+                flex-wrap: wrap;
+
             }
 
             .set
@@ -77,13 +96,12 @@
             {
                 :root
                 {
-                    /* TODO : set light scheme colors */
                     --button: #800000;
                     --body-background: #e8e8e8;
-                    --text: #a0a0a0;
+                    --text: #000000;
                     --cell-background: #f0f0f0;
-                    --cell-focus-background: #404040;
-                    --input-hover-background: #363636;
+                    --cell-focus-background: #e0e0ff;
+                    --input-hover-background: #f8f8f8;
                     --input-focus-text: #000000;
                 }
             }
@@ -105,7 +123,7 @@
                 }
             }
 
-            /* Use color variables */
+            /* Set colors */
             body
             {
                 background-color: var(--body-background);
@@ -335,7 +353,7 @@
                 let pos = { col: 1, row: 1 };
 
                 data.forEach(column => {
-                    columns_html += `<div class="fb-column">
+                    columns_html += `<div class="column">
                         ${build_column(column, pos)}
                         </div>
                         `;
@@ -343,7 +361,7 @@
                     pos.row = 1;
                 });
 
-                let html = `<div class="fb-row">
+                let html = `<div class="toplevel">
                     ${columns_html}
                     </div>
                     `;

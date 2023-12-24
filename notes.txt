@@ -1,20 +1,26 @@
-        . Better responsive font size
-            i https://css-tricks.com/viewport-sized-typography/
-            i https://stackoverflow.com/questions/15649244/responsive-font-size-in-css
-
-        . Put columns under each other if not enough room
-            --> happens already (somewhat) by default: flexbox row
-                gets "wrapped" to a new row, if too long.
-            --> but use media query to detect portrait mode
-                and change the toplevel flexbox from row to column
-
-        . test light mode too
+        . uneven gap problem
+            i https://www.answeroverflow.com/m/1138261024873664592
+            i https://stackoverflow.com/questions/29379559/css-border-width1px-doesnt-give-me-equally-thin-borders
+            . solution here?
+                i https://codepen.io/kevinpowell/pen/jOQRzBY?editors=1100
 
         . search suggestions
             . CORS?
 
         i color contrast checker:
             https://colourcontrast.cc
+
+        v test light mode too
+
+        v Put columns under each other if not enough room
+            --> happens already (somewhat) by default: flexbox row
+                gets "wrapped" to a new row, if too long.
+            --> but use media query to detect portrait mode
+                and change the toplevel flexbox from row to column
+
+        v Better responsive font size
+            i https://css-tricks.com/viewport-sized-typography/
+            i https://stackoverflow.com/questions/15649244/responsive-font-size-in-css
 
         v use CSS (color) variables
             i https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties
