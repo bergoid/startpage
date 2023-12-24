@@ -4,6 +4,7 @@
         <meta charset="utf-8">
 
         <style type="text/css">
+            /* non color related styles */
             body, input
             {
                 font-family: sans-serif;
@@ -71,82 +72,83 @@
                 padding-bottom: .2em;
             }
 
+            /* Define color variables according to color scheme */
             @media (prefers-color-scheme: light)
             {
-                body
+                :root
                 {
-                    background-color: #e8e8e8;
-                }
-
-                .cell
-                {
-                    background-color: #f0f0f0;
-                }
-
-                a
-                {
-                    color: #800000;
-                }
-
-                a:hover
-                {
-                    color: #ffffff;
-                    background-color: #800000;
-                }
-
-                input
-                {
-                    caret-color: #000000;
+                    /* TODO : set light scheme colors */
+                    --button: #800000;
+                    --body-background: #e8e8e8;
+                    --text: #a0a0a0;
+                    --cell-background: #f0f0f0;
+                    --cell-focus-background: #404040;
+                    --input-hover-background: #363636;
+                    --input-focus-text: #000000;
                 }
             }
 
             @media (prefers-color-scheme: dark)
             {
-                body
+                :root
                 {
-                    background-color: #242424;
-                    color: #a0a0a0;
+/*
+                    --button: #d88098;
+*/
+                    --button: #8ab5e2;
+                    --body-background: #242424;
+                    --text: #a0a0a0;
+                    --cell-background: #303030;
+                    --cell-focus-background: #404040;
+                    --input-hover-background: #363636;
+                    --input-focus-text: #c8c8c8;
                 }
-
-                .cell
-                {
-                    background-color: #303030;
-                }
-
-                .cell:focus
-                {
-                    background-color: #404040;
-                }
-
-                a
-                {
-                    color: #f06292;
-                }
-
-                a:hover, a:focus:hover
-                {
-                    color: #303030;
-                    background-color: #f06292;
-                }
-
-                input
-                {
-                    color: #a0a0a0;
-                    caret-color: #a0a0a0;
-                }
-
-                input:hover
-                {
-                    background-color: #363636;
-                }
-
-                input:focus
-                {
-                    color: #c8c8c8;
-                }
-
             }
 
+            /* Use color variables */
+            body
+            {
+                background-color: var(--body-background);
+                color: var(--text);
+            }
+
+            .cell
+            {
+                background-color: var(--cell-background);
+            }
+
+            .cell:focus
+            {
+                background-color: var(--cell-focus-background);
+            }
+
+            a
+            {
+                color: var(--button);
+            }
+
+            a:hover, a:focus:hover
+            {
+                color: var(--cell-background);
+                background-color: var(--button);
+            }
+
+            input
+            {
+                color: var(--text);
+                caret-color: var(--text);
+            }
+
+            input:hover
+            {
+                background-color: var(--input-hover-background);
+            }
+
+            input:focus
+            {
+                color: var(--input-focus-text);
+                caret-color: var(--input-focus-text);
+            }
         </style>
 
         <script type="text/javascript">
