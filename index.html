@@ -14,7 +14,6 @@
 
             input
             {
-/*                font-size: 1em;*/
                 border: none;
                 outline: none;
             }
@@ -58,9 +57,7 @@
             {
                 display: grid;
                 grid-template-columns: 2fr 3fr;
-                gap: .1em;
                 margin: 1em;
-                padding: .1em;
             }
 
             .header
@@ -75,7 +72,11 @@
 
             .cell
             {
-                border-radius: .15em;
+                border-radius: .18em;
+                margin-top: 1px;
+                margin-bottom: 0px;
+                margin-right: 1px;
+                margin-left: 0px;
             }
 
             .cell:focus
@@ -110,9 +111,6 @@
             {
                 :root
                 {
-/*
-                    --button: #d88098;
-*/
                     --button: #8ab5e2;
                     --body-background: #242424;
                     --text: #a0a0a0;
@@ -239,7 +237,7 @@
                         "header": "Search",
                         "contents":
                         [
-                            [ { url:"https://search.brave.com", name:"Brave Search" }, { baseUrl: "https://search.brave.com/search?q=", queryFun: "encodeQuery", default: true } ],
+                            [ { url:"https://search.brave.com", name:"Brave Search" }, { baseUrl: "https://search.brave.com/search?q=", queryFun: "encodeQuery", focus: true } ],
                             [ { url:"https://search.brave.com/", name:"Brave Images" }, { baseUrl: "https://search.brave.com/images?q=", queryFun: "encodeQuery" } ],
                             [ { url:"https://www.openstreetmap.org/", name:"OpenStreetMap" }, { baseUrl: "https://www.openstreetmap.org/search?query=", queryFun: "encodeQuery" } ],
                             [ { url:"https://en.wikipedia.org", name:"Wikipedia" }, { baseUrl: "https://en.wikipedia.org/wiki/Special:Search?search=", queryFun: "encodeQuery" } ]
@@ -288,7 +286,7 @@
                 if (Array.isArray(element))
                 {
                     for (const i of [0, 1])
-                        if (element[i].default)
+                        if (element[i].focus)
                             cursor = { ...pos, idx: i+1 };
 
                     html += `<a class="cell" id="c${pos.col}r${pos.row}i1" href="${element[0].url}"
@@ -305,7 +303,7 @@
                 }
                 else
                 {
-                    if (element.default)
+                    if (element.focus)
                         cursor = { ...pos, idx: 1 };
 
                     html += `<a class="cell span2" id="c${pos.col}r${pos.row}i1" href="${element.url}"
