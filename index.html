@@ -1,8 +1,14 @@
+<!--
+
+    Scroll down to "configuration part" for instructions on how to customize this webpage
+
+-->
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
-
+        <title>Startpage</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#128196;</text></svg>">
         <script type="text/javascript">
             //
             // URL-encode argument string
@@ -33,6 +39,7 @@
             //////////////////////////////////////////////////////////////////////////////////////////////////
             //
             // Configuration part
+            // ------------------
             //
             // Edit this data structure to change the contents of the page.
             //
@@ -52,9 +59,9 @@
                         "contents":
                         [
                             { url:"http://www.example.com/", name:"Example" },
-                            { url:"https://proton.me", name:"Proton Mail" }
+                            { url:"https://proton.me", name:"Proton Mail" },
                         ]
-                    }
+                    },
                 ],
 
                 /* Column */
@@ -67,7 +74,7 @@
                             { url:"https://lit.dev/", name:"Lit" },
                             { url:"https://svelte.dev/", name:"Svelte" },
                             { url:"https://alpinejs.dev/", name:"Alpine.js" },
-                            { url:"https://htmx.org/", name:"htmx" }
+                            { url:"https://htmx.org/", name:"htmx" },
                         ]
                     },
 
@@ -79,9 +86,9 @@
                             { url:"https://flems.io/", name:"flems.io" },
                             { url:"https://replit.com/", name:"Replit" },
                             { url:"https://www.typescriptlang.org/play/", name:"TS Playground" },
-                            { url:"https://rentry.co/", name:"rentry.co" }
+                            { url:"https://rentry.co/", name:"rentry.co" },
                         ]
-                    }
+                    },
                 ],
 
                 /* Column */
@@ -94,9 +101,9 @@
                             [ { url:"https://search.brave.com", name:"Brave Search" }, { baseUrl: "https://search.brave.com/search?q=", queryFun: "encodeQuery", focus: true } ],
                             [ { url:"https://search.brave.com/", name:"Brave Images" }, { baseUrl: "https://search.brave.com/images?q=", queryFun: "encodeQuery" } ],
                             [ { url:"https://www.openstreetmap.org/", name:"OpenStreetMap" }, { baseUrl: "https://www.openstreetmap.org/search?query=", queryFun: "encodeQuery" } ],
-                            [ { url:"https://en.wikipedia.org", name:"Wikipedia" }, { baseUrl: "https://en.wikipedia.org/wiki/Special:Search?search=", queryFun: "encodeQuery" } ]
+                            [ { url:"https://en.wikipedia.org", name:"Wikipedia" }, { baseUrl: "https://en.wikipedia.org/wiki/Special:Search?search=", queryFun: "encodeQuery" } ],
                         ]
-                    }
+                    },
                 ],
 
             ];
@@ -253,7 +260,7 @@
                                 {
                                     var new_row = Math.min(cursor.row, dimensions[cursor.col-2]);
                                     var has_input_box = get_cell({ ...cursor, col: cursor.col-1, idx: 2 });
-                                        cursor = { row: new_row, col: cursor.col-1, idx: has_input_box ? 2 : 1 };
+                                    cursor = { row: new_row, col: cursor.col-1, idx: has_input_box ? 2 : 1 };
                                 }
                         }
                         break;
@@ -297,6 +304,9 @@
                 let html = build_html(startpage_contents);
 
                 document.body.insertAdjacentHTML("beforeend", html);
+
+                if (cursor == null)
+                    cursor = { col: 1, row: 1, idx: 1 };
 
                 focus_cell(cursor);
 

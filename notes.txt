@@ -1,14 +1,22 @@
-        . uneven gap problem
-            i https://www.answeroverflow.com/m/1138261024873664592
-            i https://stackoverflow.com/questions/29379559/css-border-width1px-doesnt-give-me-equally-thin-borders
-            . solution here?
-                i https://codepen.io/kevinpowell/pen/jOQRzBY?editors=1100
-
         . search suggestions
             . CORS?
 
         i color contrast checker:
             https://colourcontrast.cc
+
+        v if "focus: true" absent
+            v set default value ([1,1])
+            i currently : error message in console when pressing arrow key
+
+        v use comma after every last element in array
+
+        v inline unicode favicon
+
+        v uneven gap problem
+            i https://www.answeroverflow.com/m/1138261024873664592
+            i https://stackoverflow.com/questions/29379559/css-border-width1px-doesnt-give-me-equally-thin-borders
+            . solution here?
+                i https://codepen.io/kevinpowell/pen/jOQRzBY?editors=1100
 
         v test light mode too
 
